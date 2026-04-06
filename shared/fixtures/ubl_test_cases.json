@@ -1,0 +1,84 @@
+[
+  {
+    "description": "Standard single-item invoice",
+    "input": {
+      "seller": {
+        "name": "Acme Ltd",
+        "tin": "12345678-0001",
+        "address": "123 Marina, Lagos"
+      },
+      "buyer": {
+        "name": "Buyer Co",
+        "tin": "87654321-0001",
+        "address": "45 Wuse, Abuja"
+      },
+      "items": [
+        {
+          "description": "Consulting",
+          "quantity": 1,
+          "unitPrice": 100000
+        }
+      ],
+      "invoiceNumber": "UBL-001",
+      "issueDate": "2026-04-06"
+    },
+    "expected": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\"\n         xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\"\n         xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\">\n  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>\n  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>\n  <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>\n  <cbc:ID>UBL-001</cbc:ID>\n  <cbc:IssueDate>2026-04-06</cbc:IssueDate>\n  <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>\n  <cbc:DocumentCurrencyCode>NGN</cbc:DocumentCurrencyCode>\n    <cac:AccountingSupplierParty>\n      <cac:Party>\n        <cac:PartyName>\n          <cbc:Name>Acme Ltd</cbc:Name>\n        </cac:PartyName>\n        <cac:PostalAddress>\n          <cbc:StreetName>123 Marina, Lagos</cbc:StreetName>\n          <cac:Country>\n            <cbc:IdentificationCode>NG</cbc:IdentificationCode>\n          </cac:Country>\n        </cac:PostalAddress>\n        <cac:PartyTaxScheme>\n          <cbc:CompanyID>12345678-0001</cbc:CompanyID>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:PartyTaxScheme>\n        <cac:PartyLegalEntity>\n          <cbc:RegistrationName>Acme Ltd</cbc:RegistrationName>\n          <cbc:CompanyID>12345678-0001</cbc:CompanyID>\n        </cac:PartyLegalEntity>\n      </cac:Party>\n    </cac:AccountingSupplierParty>\n    <cac:AccountingCustomerParty>\n      <cac:Party>\n        <cac:PartyName>\n          <cbc:Name>Buyer Co</cbc:Name>\n        </cac:PartyName>\n        <cac:PostalAddress>\n          <cbc:StreetName>45 Wuse, Abuja</cbc:StreetName>\n          <cac:Country>\n            <cbc:IdentificationCode>NG</cbc:IdentificationCode>\n          </cac:Country>\n        </cac:PostalAddress>\n        <cac:PartyTaxScheme>\n          <cbc:CompanyID>87654321-0001</cbc:CompanyID>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:PartyTaxScheme>\n        <cac:PartyLegalEntity>\n          <cbc:RegistrationName>Buyer Co</cbc:RegistrationName>\n          <cbc:CompanyID>87654321-0001</cbc:CompanyID>\n        </cac:PartyLegalEntity>\n      </cac:Party>\n    </cac:AccountingCustomerParty>\n    <cac:TaxTotal>\n      <cbc:TaxAmount currencyID=\"NGN\">7500.00</cbc:TaxAmount>\n      <cac:TaxSubtotal>\n        <cbc:TaxableAmount currencyID=\"NGN\">100000.00</cbc:TaxableAmount>\n        <cbc:TaxAmount currencyID=\"NGN\">7500.00</cbc:TaxAmount>\n        <cac:TaxCategory>\n          <cbc:ID>S</cbc:ID>\n          <cbc:Percent>7.50</cbc:Percent>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:TaxCategory>\n      </cac:TaxSubtotal>\n    </cac:TaxTotal>\n    <cac:LegalMonetaryTotal>\n      <cbc:LineExtensionAmount currencyID=\"NGN\">100000.00</cbc:LineExtensionAmount>\n      <cbc:TaxExclusiveAmount currencyID=\"NGN\">100000.00</cbc:TaxExclusiveAmount>\n      <cbc:TaxInclusiveAmount currencyID=\"NGN\">107500.00</cbc:TaxInclusiveAmount>\n      <cbc:PayableAmount currencyID=\"NGN\">107500.00</cbc:PayableAmount>\n    </cac:LegalMonetaryTotal>\n    <cac:InvoiceLine>\n      <cbc:ID>1</cbc:ID>\n      <cbc:InvoicedQuantity unitCode=\"EA\">1</cbc:InvoicedQuantity>\n      <cbc:LineExtensionAmount currencyID=\"NGN\">100000.00</cbc:LineExtensionAmount>\n      <cac:Item>\n        <cbc:Name>Consulting</cbc:Name>\n        <cac:ClassifiedTaxCategory>\n          <cbc:ID>S</cbc:ID>\n          <cbc:Percent>7.50</cbc:Percent>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:ClassifiedTaxCategory>\n      </cac:Item>\n      <cac:Price>\n        <cbc:PriceAmount currencyID=\"NGN\">100000.00</cbc:PriceAmount>\n      </cac:Price>\n      <cac:TaxTotal>\n        <cbc:TaxAmount currencyID=\"NGN\">7500.00</cbc:TaxAmount>\n      </cac:TaxTotal>\n    </cac:InvoiceLine>\n</Invoice>"
+  },
+  {
+    "description": "Credit note",
+    "input": {
+      "seller": {
+        "name": "Acme Ltd",
+        "tin": "12345678-0001",
+        "address": "123 Marina, Lagos"
+      },
+      "buyer": {
+        "name": "Buyer Co",
+        "tin": "87654321-0001",
+        "address": "45 Wuse, Abuja"
+      },
+      "items": [
+        {
+          "description": "Refund",
+          "quantity": 1,
+          "unitPrice": 25000
+        }
+      ],
+      "invoiceNumber": "UBL-CN-001",
+      "issueDate": "2026-04-06",
+      "type": "credit-note"
+    },
+    "expected": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\"\n         xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\"\n         xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\">\n  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>\n  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>\n  <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>\n  <cbc:ID>UBL-CN-001</cbc:ID>\n  <cbc:IssueDate>2026-04-06</cbc:IssueDate>\n  <cbc:InvoiceTypeCode>381</cbc:InvoiceTypeCode>\n  <cbc:DocumentCurrencyCode>NGN</cbc:DocumentCurrencyCode>\n    <cac:AccountingSupplierParty>\n      <cac:Party>\n        <cac:PartyName>\n          <cbc:Name>Acme Ltd</cbc:Name>\n        </cac:PartyName>\n        <cac:PostalAddress>\n          <cbc:StreetName>123 Marina, Lagos</cbc:StreetName>\n          <cac:Country>\n            <cbc:IdentificationCode>NG</cbc:IdentificationCode>\n          </cac:Country>\n        </cac:PostalAddress>\n        <cac:PartyTaxScheme>\n          <cbc:CompanyID>12345678-0001</cbc:CompanyID>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:PartyTaxScheme>\n        <cac:PartyLegalEntity>\n          <cbc:RegistrationName>Acme Ltd</cbc:RegistrationName>\n          <cbc:CompanyID>12345678-0001</cbc:CompanyID>\n        </cac:PartyLegalEntity>\n      </cac:Party>\n    </cac:AccountingSupplierParty>\n    <cac:AccountingCustomerParty>\n      <cac:Party>\n        <cac:PartyName>\n          <cbc:Name>Buyer Co</cbc:Name>\n        </cac:PartyName>\n        <cac:PostalAddress>\n          <cbc:StreetName>45 Wuse, Abuja</cbc:StreetName>\n          <cac:Country>\n            <cbc:IdentificationCode>NG</cbc:IdentificationCode>\n          </cac:Country>\n        </cac:PostalAddress>\n        <cac:PartyTaxScheme>\n          <cbc:CompanyID>87654321-0001</cbc:CompanyID>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:PartyTaxScheme>\n        <cac:PartyLegalEntity>\n          <cbc:RegistrationName>Buyer Co</cbc:RegistrationName>\n          <cbc:CompanyID>87654321-0001</cbc:CompanyID>\n        </cac:PartyLegalEntity>\n      </cac:Party>\n    </cac:AccountingCustomerParty>\n    <cac:TaxTotal>\n      <cbc:TaxAmount currencyID=\"NGN\">1875.00</cbc:TaxAmount>\n      <cac:TaxSubtotal>\n        <cbc:TaxableAmount currencyID=\"NGN\">25000.00</cbc:TaxableAmount>\n        <cbc:TaxAmount currencyID=\"NGN\">1875.00</cbc:TaxAmount>\n        <cac:TaxCategory>\n          <cbc:ID>S</cbc:ID>\n          <cbc:Percent>7.50</cbc:Percent>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:TaxCategory>\n      </cac:TaxSubtotal>\n    </cac:TaxTotal>\n    <cac:LegalMonetaryTotal>\n      <cbc:LineExtensionAmount currencyID=\"NGN\">25000.00</cbc:LineExtensionAmount>\n      <cbc:TaxExclusiveAmount currencyID=\"NGN\">25000.00</cbc:TaxExclusiveAmount>\n      <cbc:TaxInclusiveAmount currencyID=\"NGN\">26875.00</cbc:TaxInclusiveAmount>\n      <cbc:PayableAmount currencyID=\"NGN\">26875.00</cbc:PayableAmount>\n    </cac:LegalMonetaryTotal>\n    <cac:InvoiceLine>\n      <cbc:ID>1</cbc:ID>\n      <cbc:InvoicedQuantity unitCode=\"EA\">1</cbc:InvoicedQuantity>\n      <cbc:LineExtensionAmount currencyID=\"NGN\">25000.00</cbc:LineExtensionAmount>\n      <cac:Item>\n        <cbc:Name>Refund</cbc:Name>\n        <cac:ClassifiedTaxCategory>\n          <cbc:ID>S</cbc:ID>\n          <cbc:Percent>7.50</cbc:Percent>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:ClassifiedTaxCategory>\n      </cac:Item>\n      <cac:Price>\n        <cbc:PriceAmount currencyID=\"NGN\">25000.00</cbc:PriceAmount>\n      </cac:Price>\n      <cac:TaxTotal>\n        <cbc:TaxAmount currencyID=\"NGN\">1875.00</cbc:TaxAmount>\n      </cac:TaxTotal>\n    </cac:InvoiceLine>\n</Invoice>"
+  },
+  {
+    "description": "Mixed categories",
+    "input": {
+      "seller": {
+        "name": "Acme Ltd",
+        "tin": "12345678-0001",
+        "address": "123 Marina, Lagos"
+      },
+      "buyer": {
+        "name": "Buyer Co",
+        "tin": "87654321-0001",
+        "address": "45 Wuse, Abuja"
+      },
+      "items": [
+        {
+          "description": "Service",
+          "quantity": 1,
+          "unitPrice": 50000
+        },
+        {
+          "description": "Rice",
+          "quantity": 5,
+          "unitPrice": 2000,
+          "category": "basic-food"
+        }
+      ],
+      "invoiceNumber": "UBL-002",
+      "issueDate": "2026-04-06"
+    },
+    "expected": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<Invoice xmlns=\"urn:oasis:names:specification:ubl:schema:xsd:Invoice-2\"\n         xmlns:cac=\"urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2\"\n         xmlns:cbc=\"urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2\">\n  <cbc:UBLVersionID>2.1</cbc:UBLVersionID>\n  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>\n  <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>\n  <cbc:ID>UBL-002</cbc:ID>\n  <cbc:IssueDate>2026-04-06</cbc:IssueDate>\n  <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>\n  <cbc:DocumentCurrencyCode>NGN</cbc:DocumentCurrencyCode>\n    <cac:AccountingSupplierParty>\n      <cac:Party>\n        <cac:PartyName>\n          <cbc:Name>Acme Ltd</cbc:Name>\n        </cac:PartyName>\n        <cac:PostalAddress>\n          <cbc:StreetName>123 Marina, Lagos</cbc:StreetName>\n          <cac:Country>\n            <cbc:IdentificationCode>NG</cbc:IdentificationCode>\n          </cac:Country>\n        </cac:PostalAddress>\n        <cac:PartyTaxScheme>\n          <cbc:CompanyID>12345678-0001</cbc:CompanyID>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:PartyTaxScheme>\n        <cac:PartyLegalEntity>\n          <cbc:RegistrationName>Acme Ltd</cbc:RegistrationName>\n          <cbc:CompanyID>12345678-0001</cbc:CompanyID>\n        </cac:PartyLegalEntity>\n      </cac:Party>\n    </cac:AccountingSupplierParty>\n    <cac:AccountingCustomerParty>\n      <cac:Party>\n        <cac:PartyName>\n          <cbc:Name>Buyer Co</cbc:Name>\n        </cac:PartyName>\n        <cac:PostalAddress>\n          <cbc:StreetName>45 Wuse, Abuja</cbc:StreetName>\n          <cac:Country>\n            <cbc:IdentificationCode>NG</cbc:IdentificationCode>\n          </cac:Country>\n        </cac:PostalAddress>\n        <cac:PartyTaxScheme>\n          <cbc:CompanyID>87654321-0001</cbc:CompanyID>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:PartyTaxScheme>\n        <cac:PartyLegalEntity>\n          <cbc:RegistrationName>Buyer Co</cbc:RegistrationName>\n          <cbc:CompanyID>87654321-0001</cbc:CompanyID>\n        </cac:PartyLegalEntity>\n      </cac:Party>\n    </cac:AccountingCustomerParty>\n    <cac:TaxTotal>\n      <cbc:TaxAmount currencyID=\"NGN\">3750.00</cbc:TaxAmount>\n      <cac:TaxSubtotal>\n        <cbc:TaxableAmount currencyID=\"NGN\">50000.00</cbc:TaxableAmount>\n        <cbc:TaxAmount currencyID=\"NGN\">3750.00</cbc:TaxAmount>\n        <cac:TaxCategory>\n          <cbc:ID>S</cbc:ID>\n          <cbc:Percent>7.50</cbc:Percent>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:TaxCategory>\n      </cac:TaxSubtotal>\n      <cac:TaxSubtotal>\n        <cbc:TaxableAmount currencyID=\"NGN\">10000.00</cbc:TaxableAmount>\n        <cbc:TaxAmount currencyID=\"NGN\">0.00</cbc:TaxAmount>\n        <cac:TaxCategory>\n          <cbc:ID>Z</cbc:ID>\n          <cbc:Percent>0.00</cbc:Percent>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:TaxCategory>\n      </cac:TaxSubtotal>\n    </cac:TaxTotal>\n    <cac:LegalMonetaryTotal>\n      <cbc:LineExtensionAmount currencyID=\"NGN\">60000.00</cbc:LineExtensionAmount>\n      <cbc:TaxExclusiveAmount currencyID=\"NGN\">60000.00</cbc:TaxExclusiveAmount>\n      <cbc:TaxInclusiveAmount currencyID=\"NGN\">63750.00</cbc:TaxInclusiveAmount>\n      <cbc:PayableAmount currencyID=\"NGN\">63750.00</cbc:PayableAmount>\n    </cac:LegalMonetaryTotal>\n    <cac:InvoiceLine>\n      <cbc:ID>1</cbc:ID>\n      <cbc:InvoicedQuantity unitCode=\"EA\">1</cbc:InvoicedQuantity>\n      <cbc:LineExtensionAmount currencyID=\"NGN\">50000.00</cbc:LineExtensionAmount>\n      <cac:Item>\n        <cbc:Name>Service</cbc:Name>\n        <cac:ClassifiedTaxCategory>\n          <cbc:ID>S</cbc:ID>\n          <cbc:Percent>7.50</cbc:Percent>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:ClassifiedTaxCategory>\n      </cac:Item>\n      <cac:Price>\n        <cbc:PriceAmount currencyID=\"NGN\">50000.00</cbc:PriceAmount>\n      </cac:Price>\n      <cac:TaxTotal>\n        <cbc:TaxAmount currencyID=\"NGN\">3750.00</cbc:TaxAmount>\n      </cac:TaxTotal>\n    </cac:InvoiceLine>\n    <cac:InvoiceLine>\n      <cbc:ID>2</cbc:ID>\n      <cbc:InvoicedQuantity unitCode=\"EA\">5</cbc:InvoicedQuantity>\n      <cbc:LineExtensionAmount currencyID=\"NGN\">10000.00</cbc:LineExtensionAmount>\n      <cac:Item>\n        <cbc:Name>Rice</cbc:Name>\n        <cac:ClassifiedTaxCategory>\n          <cbc:ID>Z</cbc:ID>\n          <cbc:Percent>0.00</cbc:Percent>\n          <cac:TaxScheme>\n            <cbc:ID>VAT</cbc:ID>\n          </cac:TaxScheme>\n        </cac:ClassifiedTaxCategory>\n      </cac:Item>\n      <cac:Price>\n        <cbc:PriceAmount currencyID=\"NGN\">2000.00</cbc:PriceAmount>\n      </cac:Price>\n      <cac:TaxTotal>\n        <cbc:TaxAmount currencyID=\"NGN\">0.00</cbc:TaxAmount>\n      </cac:TaxTotal>\n    </cac:InvoiceLine>\n</Invoice>"
+  }
+]
