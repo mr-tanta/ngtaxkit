@@ -17,6 +17,8 @@ INVALID_TIN = "NGTK_INVALID_TIN"
 INVALID_DATE = "NGTK_INVALID_DATE"
 RATE_NOT_FOUND = "NGTK_RATE_NOT_FOUND"
 VALIDATION_ERROR = "NGTK_VALIDATION_ERROR"
+INVALID_QUANTITY = "NGTK_INVALID_QUANTITY"
+EMPTY_INVOICE = "NGTK_EMPTY_INVOICE"
 
 
 # ─── Base Error ───────────────────────────────────────────────────────────────
@@ -156,3 +158,17 @@ class ValidationError(NgtaxkitError, ValueError):
         result = super().to_json()
         result["errors"] = self.errors
         return result
+
+
+class InvalidQuantityError(NgtaxkitError, ValueError):
+    """Raised when a line item has zero or negative quantity."""
+
+    def __init__(self, message: str, legal_basis: str | None = None) -> None:
+        NgtaxkitError.__init__(self, INVALID_QUANTITY, message, legal_basis)
+
+
+class EmptyInvoiceError(NgtaxkitError, ValueError):
+    """Raised when an invoice has no line items."""
+
+    def __init__(self, message: str, legal_basis: str | None = None) -> None:
+        NgtaxkitError.__init__(self, EMPTY_INVOICE, message, legal_basis)
