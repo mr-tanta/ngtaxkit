@@ -1,0 +1,256 @@
+[
+  {
+    "description": "Multi-state batch — 3 employees across Lagos, FCT, Rivers",
+    "input": {
+      "employees": [
+        {
+          "id": "EMP001",
+          "name": "Adebayo Ogunlesi",
+          "grossAnnual": 5000000,
+          "stateOfResidence": "LA",
+          "pensionContributing": true,
+          "nhfContributing": true
+        },
+        {
+          "id": "EMP002",
+          "name": "Ngozi Okafor",
+          "grossAnnual": 3000000,
+          "stateOfResidence": "FC",
+          "pensionContributing": true,
+          "nhfContributing": false
+        },
+        {
+          "id": "EMP003",
+          "name": "Emeka Eze",
+          "grossAnnual": 8000000,
+          "stateOfResidence": "RI",
+          "pensionContributing": true,
+          "nhfContributing": true
+        }
+      ]
+    },
+    "expected": {
+      "employeeCount": 3,
+      "byState": {
+        "LA": {
+          "stateCode": "LA",
+          "stateName": "Lagos",
+          "irsName": "Lagos State Internal Revenue Service (LIRS)",
+          "employeeCount": 1,
+          "filingMethods": ["e-filing", "email", "physical"],
+          "portalUrl": "https://lirs.gov.ng",
+          "formH1Deadline": "2027-01-31"
+        },
+        "FC": {
+          "stateCode": "FC",
+          "stateName": "Federal Capital Territory",
+          "irsName": "FCT Internal Revenue Service (FCT-IRS)",
+          "employeeCount": 1,
+          "filingMethods": ["e-filing", "email", "physical"],
+          "portalUrl": "https://fctirs.gov.ng",
+          "formH1Deadline": "2027-01-31"
+        },
+        "RI": {
+          "stateCode": "RI",
+          "stateName": "Rivers",
+          "irsName": "Rivers State Internal Revenue Service (RIRS)",
+          "employeeCount": 1,
+          "filingMethods": ["e-filing", "physical"],
+          "portalUrl": "https://rirs.gov.ng",
+          "formH1Deadline": "2027-01-31"
+        }
+      },
+      "totals": {
+        "totalGross": 16000000,
+        "employeeCount": 3
+      }
+    }
+  },
+  {
+    "description": "Empty batch — no employees",
+    "input": {
+      "employees": []
+    },
+    "expected": {
+      "employeeCount": 0,
+      "employees": [],
+      "byState": {},
+      "totals": {
+        "totalGross": 0,
+        "totalPaye": 0,
+        "totalPension": 0,
+        "totalNhf": 0,
+        "employeeCount": 0
+      }
+    }
+  },
+  {
+    "description": "Single employee — Lagos, exempt income",
+    "input": {
+      "employees": [
+        {
+          "id": "EMP010",
+          "name": "Funke Adeyemi",
+          "grossAnnual": 800000,
+          "stateOfResidence": "LA",
+          "pensionContributing": false,
+          "nhfContributing": false
+        }
+      ]
+    },
+    "expected": {
+      "employeeCount": 1,
+      "employees": [
+        {
+          "id": "EMP010",
+          "name": "Funke Adeyemi",
+          "grossAnnual": 800000,
+          "stateOfResidence": "LA",
+          "exempt": true,
+          "annualPaye": 0,
+          "monthlyPaye": 0
+        }
+      ],
+      "byState": {
+        "LA": {
+          "stateCode": "LA",
+          "stateName": "Lagos",
+          "irsName": "Lagos State Internal Revenue Service (LIRS)",
+          "employeeCount": 1,
+          "totalPaye": 0,
+          "filingMethods": ["e-filing", "email", "physical"],
+          "portalUrl": "https://lirs.gov.ng",
+          "formH1Deadline": "2027-01-31"
+        }
+      },
+      "totals": {
+        "totalGross": 800000,
+        "totalPaye": 0,
+        "employeeCount": 1
+      }
+    }
+  },
+  {
+    "description": "Single employee — high earner in Kaduna with pension and NHF",
+    "input": {
+      "employees": [
+        {
+          "id": "EMP020",
+          "name": "Ibrahim Musa",
+          "grossAnnual": 12000000,
+          "stateOfResidence": "KD",
+          "pensionContributing": true,
+          "nhfContributing": true
+        }
+      ]
+    },
+    "expected": {
+      "employeeCount": 1,
+      "byState": {
+        "KD": {
+          "stateCode": "KD",
+          "stateName": "Kaduna",
+          "irsName": "Kaduna State Internal Revenue Service (KDIRS)",
+          "employeeCount": 1,
+          "filingMethods": ["e-filing", "physical"],
+          "portalUrl": "https://kdirs.gov.ng",
+          "formH1Deadline": "2027-01-31"
+        }
+      },
+      "totals": {
+        "totalGross": 12000000,
+        "employeeCount": 1
+      }
+    }
+  },
+  {
+    "description": "Multi-state batch — 2 employees same state (Oyo)",
+    "input": {
+      "employees": [
+        {
+          "id": "EMP030",
+          "name": "Tunde Bakare",
+          "grossAnnual": 4000000,
+          "stateOfResidence": "OY",
+          "pensionContributing": true,
+          "nhfContributing": false
+        },
+        {
+          "id": "EMP031",
+          "name": "Bola Tinubu",
+          "grossAnnual": 2500000,
+          "stateOfResidence": "OY",
+          "pensionContributing": true,
+          "nhfContributing": false
+        }
+      ]
+    },
+    "expected": {
+      "employeeCount": 2,
+      "byState": {
+        "OY": {
+          "stateCode": "OY",
+          "stateName": "Oyo",
+          "irsName": "Oyo State Internal Revenue Service (OYIRS)",
+          "employeeCount": 2,
+          "filingMethods": ["e-filing", "physical"],
+          "portalUrl": "https://oyirs.gov.ng",
+          "formH1Deadline": "2027-01-31"
+        }
+      },
+      "totals": {
+        "totalGross": 6500000,
+        "employeeCount": 2
+      }
+    }
+  },
+  {
+    "description": "Invalid state code — error case",
+    "input": {
+      "employees": [
+        {
+          "id": "EMP040",
+          "name": "Test Employee",
+          "grossAnnual": 2000000,
+          "stateOfResidence": "XX"
+        }
+      ]
+    },
+    "expectedError": {
+      "code": "NGTK_INVALID_STATE"
+    }
+  },
+  {
+    "description": "Single employee — physical-only filing state (Borno)",
+    "input": {
+      "employees": [
+        {
+          "id": "EMP050",
+          "name": "Abubakar Shettima",
+          "grossAnnual": 2000000,
+          "stateOfResidence": "BO",
+          "pensionContributing": true,
+          "nhfContributing": false
+        }
+      ]
+    },
+    "expected": {
+      "employeeCount": 1,
+      "byState": {
+        "BO": {
+          "stateCode": "BO",
+          "stateName": "Borno",
+          "irsName": "Borno State Board of Internal Revenue (BOBIR)",
+          "employeeCount": 1,
+          "filingMethods": ["physical"],
+          "portalUrl": null,
+          "formH1Deadline": "2027-01-31"
+        }
+      },
+      "totals": {
+        "totalGross": 2000000,
+        "employeeCount": 1
+      }
+    }
+  }
+]

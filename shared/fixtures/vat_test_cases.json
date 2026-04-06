@@ -1,0 +1,282 @@
+[
+  {
+    "description": "Standard VAT on ₦10,000",
+    "input": {
+      "amount": 10000,
+      "category": "standard"
+    },
+    "expected": {
+      "net": 10000,
+      "vat": 750,
+      "gross": 10750,
+      "rate": 0.075,
+      "rateType": "standard",
+      "category": "standard",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Standard VAT on ₦1,333.33 — banker's rounding",
+    "input": {
+      "amount": 1333.33,
+      "category": "standard"
+    },
+    "expected": {
+      "net": 1333.33,
+      "vat": 100,
+      "gross": 1433.33,
+      "rate": 0.075,
+      "rateType": "standard",
+      "category": "standard",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Standard VAT on ₦100,000",
+    "input": {
+      "amount": 100000,
+      "category": "standard"
+    },
+    "expected": {
+      "net": 100000,
+      "vat": 7500,
+      "gross": 107500,
+      "rate": 0.075,
+      "rateType": "standard",
+      "category": "standard",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Standard VAT on ₦0.01 — minimum amount",
+    "input": {
+      "amount": 0.01,
+      "category": "standard"
+    },
+    "expected": {
+      "net": 0.01,
+      "vat": 0,
+      "gross": 0.01,
+      "rate": 0.075,
+      "rateType": "standard",
+      "category": "standard",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Inclusive VAT extraction from ₦10,750",
+    "input": {
+      "amount": 10750,
+      "inclusive": true,
+      "category": "standard"
+    },
+    "expected": {
+      "net": 10000,
+      "vat": 750,
+      "gross": 10750,
+      "rate": 0.075,
+      "rateType": "standard",
+      "category": "standard",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Inclusive VAT extraction from ₦1,075 — exact reverse",
+    "input": {
+      "amount": 1075,
+      "inclusive": true,
+      "category": "standard"
+    },
+    "expected": {
+      "net": 1000,
+      "vat": 75,
+      "gross": 1075,
+      "rate": 0.075,
+      "rateType": "standard",
+      "category": "standard",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Inclusive VAT extraction from ₦5,375 — banker's rounding",
+    "input": {
+      "amount": 5375,
+      "inclusive": true,
+      "category": "standard"
+    },
+    "expected": {
+      "net": 5000,
+      "vat": 375,
+      "gross": 5375,
+      "rate": 0.075,
+      "rateType": "standard",
+      "category": "standard",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Zero-rated category: basic-food",
+    "input": {
+      "amount": 5000,
+      "category": "basic-food"
+    },
+    "expected": {
+      "net": 5000,
+      "vat": 0,
+      "gross": 5000,
+      "rate": 0,
+      "rateType": "zero-rated",
+      "category": "basic-food",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Zero-rated category: medicine",
+    "input": {
+      "amount": 25000,
+      "category": "medicine"
+    },
+    "expected": {
+      "net": 25000,
+      "vat": 0,
+      "gross": 25000,
+      "rate": 0,
+      "rateType": "zero-rated",
+      "category": "medicine",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Zero-rated category: export-services",
+    "input": {
+      "amount": 1000000,
+      "category": "export-services"
+    },
+    "expected": {
+      "net": 1000000,
+      "vat": 0,
+      "gross": 1000000,
+      "rate": 0,
+      "rateType": "zero-rated",
+      "category": "export-services",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Exempt category: residential-rent",
+    "input": {
+      "amount": 500000,
+      "category": "residential-rent"
+    },
+    "expected": {
+      "net": 500000,
+      "vat": 0,
+      "gross": 500000,
+      "rate": 0,
+      "rateType": "exempt",
+      "category": "residential-rent",
+      "inputVatRecoverable": false
+    }
+  },
+  {
+    "description": "Exempt category: financial-services",
+    "input": {
+      "amount": 75000,
+      "category": "financial-services"
+    },
+    "expected": {
+      "net": 75000,
+      "vat": 0,
+      "gross": 75000,
+      "rate": 0,
+      "rateType": "exempt",
+      "category": "financial-services",
+      "inputVatRecoverable": false
+    }
+  },
+  {
+    "description": "Exempt category: insurance",
+    "input": {
+      "amount": 200000,
+      "category": "insurance"
+    },
+    "expected": {
+      "net": 200000,
+      "vat": 0,
+      "gross": 200000,
+      "rate": 0,
+      "rateType": "exempt",
+      "category": "insurance",
+      "inputVatRecoverable": false
+    }
+  },
+  {
+    "description": "Negative amount — error case",
+    "input": {
+      "amount": -100,
+      "category": "standard"
+    },
+    "expectedError": {
+      "code": "NGTK_INVALID_AMOUNT"
+    }
+  },
+  {
+    "description": "Invalid category — error case",
+    "input": {
+      "amount": 1000,
+      "category": "luxury-goods"
+    },
+    "expectedError": {
+      "code": "NGTK_INVALID_CATEGORY"
+    }
+  },
+  {
+    "description": "Zero amount — edge case",
+    "input": {
+      "amount": 0,
+      "category": "standard"
+    },
+    "expected": {
+      "net": 0,
+      "vat": 0,
+      "gross": 0,
+      "rate": 0.075,
+      "rateType": "standard",
+      "category": "standard",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Inclusive zero-rated — no VAT to extract",
+    "input": {
+      "amount": 5000,
+      "inclusive": true,
+      "category": "tuition"
+    },
+    "expected": {
+      "net": 5000,
+      "vat": 0,
+      "gross": 5000,
+      "rate": 0,
+      "rateType": "zero-rated",
+      "category": "tuition",
+      "inputVatRecoverable": true
+    }
+  },
+  {
+    "description": "Large amount — ₦50,000,000 standard VAT",
+    "input": {
+      "amount": 50000000,
+      "category": "standard"
+    },
+    "expected": {
+      "net": 50000000,
+      "vat": 3750000,
+      "gross": 53750000,
+      "rate": 0.075,
+      "rateType": "standard",
+      "category": "standard",
+      "inputVatRecoverable": true
+    }
+  }
+]

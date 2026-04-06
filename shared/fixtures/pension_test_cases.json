@@ -1,0 +1,158 @@
+[
+  {
+    "description": "Minimum rates — basic only",
+    "input": {
+      "basicSalary": 200000,
+      "housingAllowance": 0,
+      "transportAllowance": 0
+    },
+    "expected": {
+      "pensionableEarnings": 200000,
+      "employeeContribution": 16000,
+      "employerContribution": 20000,
+      "totalContribution": 36000
+    }
+  },
+  {
+    "description": "Minimum rates — basic + housing + transport",
+    "input": {
+      "basicSalary": 300000,
+      "housingAllowance": 100000,
+      "transportAllowance": 50000
+    },
+    "expected": {
+      "pensionableEarnings": 450000,
+      "employeeContribution": 36000,
+      "employerContribution": 45000,
+      "totalContribution": 81000
+    }
+  },
+  {
+    "description": "Minimum rates — large salary",
+    "input": {
+      "basicSalary": 1000000,
+      "housingAllowance": 500000,
+      "transportAllowance": 200000
+    },
+    "expected": {
+      "pensionableEarnings": 1700000,
+      "employeeContribution": 136000,
+      "employerContribution": 170000,
+      "totalContribution": 306000
+    }
+  },
+  {
+    "description": "Custom rates — employee 10%, employer 15%",
+    "input": {
+      "basicSalary": 500000,
+      "housingAllowance": 200000,
+      "transportAllowance": 100000,
+      "employeeRate": 0.10,
+      "employerRate": 0.15
+    },
+    "expected": {
+      "pensionableEarnings": 800000,
+      "employeeContribution": 80000,
+      "employerContribution": 120000,
+      "totalContribution": 200000
+    }
+  },
+  {
+    "description": "Custom rates — employee 12%, employer 20%",
+    "input": {
+      "basicSalary": 400000,
+      "housingAllowance": 150000,
+      "transportAllowance": 80000,
+      "employeeRate": 0.12,
+      "employerRate": 0.20
+    },
+    "expected": {
+      "pensionableEarnings": 630000,
+      "employeeContribution": 75600,
+      "employerContribution": 126000,
+      "totalContribution": 201600
+    }
+  },
+  {
+    "description": "Invalid employee rate — below 8% minimum",
+    "input": {
+      "basicSalary": 300000,
+      "housingAllowance": 100000,
+      "transportAllowance": 50000,
+      "employeeRate": 0.05
+    },
+    "expectedError": {
+      "code": "NGTK_INVALID_PENSION_RATE"
+    }
+  },
+  {
+    "description": "Invalid employer rate — below 10% minimum",
+    "input": {
+      "basicSalary": 300000,
+      "housingAllowance": 100000,
+      "transportAllowance": 50000,
+      "employerRate": 0.07
+    },
+    "expectedError": {
+      "code": "NGTK_INVALID_PENSION_RATE"
+    }
+  },
+  {
+    "description": "Zero basic salary — edge case",
+    "input": {
+      "basicSalary": 0,
+      "housingAllowance": 0,
+      "transportAllowance": 0
+    },
+    "expected": {
+      "pensionableEarnings": 0,
+      "employeeContribution": 0,
+      "employerContribution": 0,
+      "totalContribution": 0
+    }
+  },
+  {
+    "description": "Deadline calculation — salary paid on Monday 2026-03-02",
+    "input": {
+      "basicSalary": 250000,
+      "housingAllowance": 100000,
+      "transportAllowance": 50000,
+      "salaryPaymentDate": "2026-03-02"
+    },
+    "expected": {
+      "pensionableEarnings": 400000,
+      "employeeContribution": 32000,
+      "employerContribution": 40000,
+      "totalContribution": 72000,
+      "remittanceDeadline": "2026-03-11"
+    }
+  },
+  {
+    "description": "Deadline calculation — salary paid on Friday 2026-01-30",
+    "input": {
+      "basicSalary": 250000,
+      "housingAllowance": 100000,
+      "transportAllowance": 50000,
+      "salaryPaymentDate": "2026-01-30"
+    },
+    "expected": {
+      "pensionableEarnings": 400000,
+      "employeeContribution": 32000,
+      "employerContribution": 40000,
+      "totalContribution": 72000,
+      "remittanceDeadline": "2026-02-10"
+    }
+  },
+  {
+    "description": "Only basic salary — no allowances provided",
+    "input": {
+      "basicSalary": 500000
+    },
+    "expected": {
+      "pensionableEarnings": 500000,
+      "employeeContribution": 40000,
+      "employerContribution": 50000,
+      "totalContribution": 90000
+    }
+  }
+]

@@ -1,0 +1,235 @@
+[
+  {
+    "description": "Exempt — gross annual exactly ₦800,000",
+    "input": {
+      "grossAnnual": 800000,
+      "pensionContributing": false,
+      "nhfContributing": false
+    },
+    "expected": {
+      "grossAnnual": 800000,
+      "exempt": true,
+      "annualPaye": 0,
+      "monthlyPaye": 0,
+      "effectiveRate": 0
+    }
+  },
+  {
+    "description": "Exempt — gross annual ₦500,000 (below threshold)",
+    "input": {
+      "grossAnnual": 500000,
+      "pensionContributing": false,
+      "nhfContributing": false
+    },
+    "expected": {
+      "grossAnnual": 500000,
+      "exempt": true,
+      "annualPaye": 0,
+      "monthlyPaye": 0,
+      "effectiveRate": 0
+    }
+  },
+  {
+    "description": "JTB Example 1 — ₦3,000,000 gross, no pension/NHF",
+    "input": {
+      "grossAnnual": 3000000,
+      "pensionContributing": false,
+      "nhfContributing": false
+    },
+    "expected": {
+      "grossAnnual": 3000000,
+      "grossMonthly": 250000,
+      "exempt": false,
+      "reliefs": {
+        "consolidatedRelief": 800000,
+        "pensionRelief": 0,
+        "nhfRelief": 0,
+        "rentRelief": 0,
+        "total": 800000
+      },
+      "taxableIncome": 2200000,
+      "taxBands": [
+        { "lower": 0, "upper": 800000, "rate": 0, "taxInBand": 0 },
+        { "lower": 800000, "upper": 1100000, "rate": 0.07, "taxInBand": 21000 },
+        { "lower": 1100000, "upper": 1400000, "rate": 0.11, "taxInBand": 33000 },
+        { "lower": 1400000, "upper": 1900000, "rate": 0.15, "taxInBand": 75000 },
+        { "lower": 1900000, "upper": 2200000, "rate": 0.19, "taxInBand": 57000 },
+        { "lower": 2400000, "upper": 4000000, "rate": 0.21, "taxInBand": 0 },
+        { "lower": 4000000, "upper": null, "rate": 0.24, "taxInBand": 0 }
+      ],
+      "annualPaye": 186000,
+      "monthlyPaye": 15500,
+      "effectiveRate": 0.062
+    }
+  },
+  {
+    "description": "JTB Example 2 — ₦5,000,000 gross with pension",
+    "input": {
+      "grossAnnual": 5000000,
+      "pensionContributing": true,
+      "nhfContributing": false
+    },
+    "expected": {
+      "grossAnnual": 5000000,
+      "grossMonthly": 416666.67,
+      "exempt": false,
+      "reliefs": {
+        "consolidatedRelief": 1200000,
+        "pensionRelief": 400000,
+        "nhfRelief": 0,
+        "rentRelief": 0,
+        "total": 1600000
+      },
+      "taxableIncome": 3400000,
+      "annualPaye": 434000,
+      "monthlyPaye": 36166.67,
+      "effectiveRate": 0.0868
+    }
+  },
+  {
+    "description": "JTB Example 3 — ₦10,000,000 gross with pension and NHF",
+    "input": {
+      "grossAnnual": 10000000,
+      "pensionContributing": true,
+      "nhfContributing": true
+    },
+    "expected": {
+      "grossAnnual": 10000000,
+      "grossMonthly": 833333.33,
+      "exempt": false,
+      "reliefs": {
+        "consolidatedRelief": 2200000,
+        "pensionRelief": 800000,
+        "nhfRelief": 250000,
+        "rentRelief": 0,
+        "total": 3250000
+      },
+      "taxableIncome": 6750000,
+      "annualPaye": 1220000,
+      "monthlyPaye": 101666.67,
+      "effectiveRate": 0.122
+    }
+  },
+  {
+    "description": "₦800,001 — just above exemption threshold",
+    "input": {
+      "grossAnnual": 800001,
+      "pensionContributing": false,
+      "nhfContributing": false
+    },
+    "expected": {
+      "grossAnnual": 800001,
+      "grossMonthly": 66666.75,
+      "exempt": false,
+      "reliefs": {
+        "consolidatedRelief": 360000.2,
+        "pensionRelief": 0,
+        "nhfRelief": 0,
+        "rentRelief": 0,
+        "total": 360000.2
+      },
+      "taxableIncome": 440000.8,
+      "annualPaye": 0,
+      "monthlyPaye": 0,
+      "effectiveRate": 0
+    }
+  },
+  {
+    "description": "₦1,200,000 gross — taxable falls within first band (0%)",
+    "input": {
+      "grossAnnual": 1200000,
+      "pensionContributing": false,
+      "nhfContributing": false
+    },
+    "expected": {
+      "grossAnnual": 1200000,
+      "grossMonthly": 100000,
+      "exempt": false,
+      "reliefs": {
+        "consolidatedRelief": 440000,
+        "pensionRelief": 0,
+        "nhfRelief": 0,
+        "rentRelief": 0,
+        "total": 440000
+      },
+      "taxableIncome": 760000,
+      "annualPaye": 0,
+      "monthlyPaye": 0,
+      "effectiveRate": 0
+    }
+  },
+  {
+    "description": "₦20,000,000 gross — hits top bracket (24%)",
+    "input": {
+      "grossAnnual": 20000000,
+      "pensionContributing": true,
+      "nhfContributing": true
+    },
+    "expected": {
+      "grossAnnual": 20000000,
+      "grossMonthly": 1666666.67,
+      "exempt": false,
+      "reliefs": {
+        "consolidatedRelief": 4200000,
+        "pensionRelief": 1600000,
+        "nhfRelief": 500000,
+        "rentRelief": 0,
+        "total": 6300000
+      },
+      "taxableIncome": 13700000,
+      "annualPaye": 2888000,
+      "monthlyPaye": 240666.67,
+      "effectiveRate": 0.1444
+    }
+  },
+  {
+    "description": "₦4,000,000 gross with rent relief",
+    "input": {
+      "grossAnnual": 4000000,
+      "pensionContributing": false,
+      "nhfContributing": false,
+      "rentPaidAnnual": 1200000
+    },
+    "expected": {
+      "grossAnnual": 4000000,
+      "grossMonthly": 333333.33,
+      "exempt": false,
+      "reliefs": {
+        "consolidatedRelief": 1000000,
+        "pensionRelief": 0,
+        "nhfRelief": 0,
+        "rentRelief": 240000,
+        "total": 1240000
+      },
+      "taxableIncome": 2760000,
+      "annualPaye": 299600,
+      "monthlyPaye": 24966.67,
+      "effectiveRate": 0.0749
+    }
+  },
+  {
+    "description": "₦6,000,000 gross with rent relief capped at ₦500,000",
+    "input": {
+      "grossAnnual": 6000000,
+      "pensionContributing": false,
+      "nhfContributing": false,
+      "rentPaidAnnual": 5000000
+    },
+    "expected": {
+      "grossAnnual": 6000000,
+      "grossMonthly": 500000,
+      "exempt": false,
+      "reliefs": {
+        "consolidatedRelief": 1400000,
+        "pensionRelief": 0,
+        "nhfRelief": 0,
+        "rentRelief": 500000,
+        "total": 1900000
+      },
+      "taxableIncome": 4100000,
+      "annualPaye": 584000,
+      "monthlyPaye": 48666.67,
+      "effectiveRate": 0.0973
+    }
+  }
+]

@@ -1,0 +1,257 @@
+[
+  {
+    "description": "NHF — 2.5% of ₦300,000 basic salary",
+    "input": {
+      "function": "nhf",
+      "basicSalary": 300000
+    },
+    "expected": {
+      "nhfAmount": 7500,
+      "rate": 0.025,
+      "base": "basicSalary"
+    }
+  },
+  {
+    "description": "NHF — 2.5% of ₦1,000,000 basic salary",
+    "input": {
+      "function": "nhf",
+      "basicSalary": 1000000
+    },
+    "expected": {
+      "nhfAmount": 25000,
+      "rate": 0.025,
+      "base": "basicSalary"
+    }
+  },
+  {
+    "description": "NHF — zero basic salary",
+    "input": {
+      "function": "nhf",
+      "basicSalary": 0
+    },
+    "expected": {
+      "nhfAmount": 0,
+      "rate": 0.025,
+      "base": "basicSalary"
+    }
+  },
+  {
+    "description": "NSITF — 1% of ₦5,000,000 monthly payroll",
+    "input": {
+      "function": "nsitf",
+      "monthlyPayroll": 5000000
+    },
+    "expected": {
+      "nsitfAmount": 50000,
+      "rate": 0.01,
+      "base": "monthlyPayroll",
+      "contributorType": "employer"
+    }
+  },
+  {
+    "description": "NSITF — 1% of ₦500,000 monthly payroll",
+    "input": {
+      "function": "nsitf",
+      "monthlyPayroll": 500000
+    },
+    "expected": {
+      "nsitfAmount": 5000,
+      "rate": 0.01,
+      "base": "monthlyPayroll",
+      "contributorType": "employer"
+    }
+  },
+  {
+    "description": "NSITF — zero monthly payroll",
+    "input": {
+      "function": "nsitf",
+      "monthlyPayroll": 0
+    },
+    "expected": {
+      "nsitfAmount": 0,
+      "rate": 0.01,
+      "base": "monthlyPayroll",
+      "contributorType": "employer"
+    }
+  },
+  {
+    "description": "ITF — eligible by employee count (5+ employees)",
+    "input": {
+      "function": "itf",
+      "annualPayroll": 60000000,
+      "employeeCount": 10,
+      "annualTurnover": 30000000
+    },
+    "expected": {
+      "itfAmount": 600000,
+      "rate": 0.01,
+      "eligible": true,
+      "eligibilityBasis": "employeeCount",
+      "refundAmount": 0
+    }
+  },
+  {
+    "description": "ITF — eligible by turnover (₦50M+)",
+    "input": {
+      "function": "itf",
+      "annualPayroll": 40000000,
+      "employeeCount": 3,
+      "annualTurnover": 55000000
+    },
+    "expected": {
+      "itfAmount": 400000,
+      "rate": 0.01,
+      "eligible": true,
+      "eligibilityBasis": "annualTurnover",
+      "refundAmount": 0
+    }
+  },
+  {
+    "description": "ITF — not eligible (below both thresholds)",
+    "input": {
+      "function": "itf",
+      "annualPayroll": 20000000,
+      "employeeCount": 3,
+      "annualTurnover": 40000000
+    },
+    "expected": {
+      "itfAmount": 0,
+      "rate": 0.01,
+      "eligible": false,
+      "refundAmount": 0
+    }
+  },
+  {
+    "description": "ITF — with training spend refund (50% of contribution)",
+    "input": {
+      "function": "itf",
+      "annualPayroll": 100000000,
+      "employeeCount": 50,
+      "annualTurnover": 200000000,
+      "trainingSpend": 800000
+    },
+    "expected": {
+      "itfAmount": 1000000,
+      "rate": 0.01,
+      "eligible": true,
+      "eligibilityBasis": "employeeCount",
+      "refundAmount": 500000
+    }
+  },
+  {
+    "description": "ITF — training spend exceeds 50% cap",
+    "input": {
+      "function": "itf",
+      "annualPayroll": 50000000,
+      "employeeCount": 8,
+      "trainingSpend": 1000000
+    },
+    "expected": {
+      "itfAmount": 500000,
+      "rate": 0.01,
+      "eligible": true,
+      "eligibilityBasis": "employeeCount",
+      "refundAmount": 250000
+    }
+  },
+  {
+    "description": "ITF — training spend below 50% cap",
+    "input": {
+      "function": "itf",
+      "annualPayroll": 80000000,
+      "employeeCount": 20,
+      "trainingSpend": 200000
+    },
+    "expected": {
+      "itfAmount": 800000,
+      "rate": 0.01,
+      "eligible": true,
+      "eligibilityBasis": "employeeCount",
+      "refundAmount": 200000
+    }
+  },
+  {
+    "description": "calculateAll — combined NHF + NSITF + ITF",
+    "input": {
+      "function": "calculateAll",
+      "basicSalary": 500000,
+      "monthlyPayroll": 3000000,
+      "annualPayroll": 36000000,
+      "employeeCount": 10,
+      "annualTurnover": 100000000
+    },
+    "expected": {
+      "nhf": {
+        "nhfAmount": 12500,
+        "rate": 0.025
+      },
+      "nsitf": {
+        "nsitfAmount": 30000,
+        "rate": 0.01
+      },
+      "itf": {
+        "itfAmount": 360000,
+        "rate": 0.01,
+        "eligible": true
+      }
+    }
+  },
+  {
+    "description": "calculateAll — ITF not eligible",
+    "input": {
+      "function": "calculateAll",
+      "basicSalary": 200000,
+      "monthlyPayroll": 800000,
+      "annualPayroll": 9600000,
+      "employeeCount": 3,
+      "annualTurnover": 20000000
+    },
+    "expected": {
+      "nhf": {
+        "nhfAmount": 5000,
+        "rate": 0.025
+      },
+      "nsitf": {
+        "nsitfAmount": 8000,
+        "rate": 0.01
+      },
+      "itf": {
+        "itfAmount": 0,
+        "rate": 0.01,
+        "eligible": false
+      }
+    }
+  },
+  {
+    "description": "ITF — exactly at employee threshold (5 employees)",
+    "input": {
+      "function": "itf",
+      "annualPayroll": 30000000,
+      "employeeCount": 5,
+      "annualTurnover": 20000000
+    },
+    "expected": {
+      "itfAmount": 300000,
+      "rate": 0.01,
+      "eligible": true,
+      "eligibilityBasis": "employeeCount",
+      "refundAmount": 0
+    }
+  },
+  {
+    "description": "ITF — exactly at turnover threshold (₦50,000,000)",
+    "input": {
+      "function": "itf",
+      "annualPayroll": 25000000,
+      "employeeCount": 4,
+      "annualTurnover": 50000000
+    },
+    "expected": {
+      "itfAmount": 250000,
+      "rate": 0.01,
+      "eligible": true,
+      "eligibilityBasis": "annualTurnover",
+      "refundAmount": 0
+    }
+  }
+]

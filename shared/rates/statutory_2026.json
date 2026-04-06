@@ -1,0 +1,28 @@
+{
+  "version": "2026.1.0",
+  "effectiveDate": "2026-01-01",
+  "nhf": {
+    "rate": 0.025,
+    "base": "basicSalary",
+    "legalBasis": "National Housing Fund Act, Section 4 — Employee contribution of 2.5% of basic salary"
+  },
+  "nsitf": {
+    "rate": 0.01,
+    "base": "monthlyPayroll",
+    "contributorType": "employer",
+    "legalBasis": "Employee Compensation Act 2010, Section 56 — Employer contribution of 1% of monthly payroll to NSITF"
+  },
+  "itf": {
+    "rate": 0.01,
+    "base": "annualPayroll",
+    "thresholds": {
+      "minimumEmployees": 5,
+      "minimumAnnualTurnover": 50000000
+    },
+    "refund": {
+      "maxRate": 0.50,
+      "description": "Up to 50% of ITF contribution refundable against qualifying training spend"
+    },
+    "legalBasis": "Industrial Training Fund Act, Section 6 — 1% of annual payroll for employers with 5+ employees or ₦50M+ annual turnover"
+  }
+}

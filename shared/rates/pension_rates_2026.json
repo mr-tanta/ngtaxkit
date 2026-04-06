@@ -1,0 +1,19 @@
+{
+  "version": "2026.1.0",
+  "effectiveDate": "2026-01-01",
+  "legalBasis": "Pension Reform Act (PRA) 2014, Section 4(1) — Contributory Pension Scheme minimum rates",
+  "scheme": "CPS",
+  "minimumRates": {
+    "employee": 0.08,
+    "employer": 0.10
+  },
+  "pensionableEarnings": {
+    "components": ["basicSalary", "housingAllowance", "transportAllowance"],
+    "legalBasis": "PRA 2014, Section 4(3) — Pensionable earnings comprise basic salary, housing allowance, and transport allowance"
+  },
+  "remittance": {
+    "deadlineWorkingDays": 7,
+    "description": "7 working days after salary payment date, skipping weekends and Nigerian public holidays",
+    "legalBasis": "PRA 2014, Section 11(3)(b) — Employer shall remit contributions within 7 working days"
+  }
+}

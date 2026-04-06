@@ -1,0 +1,343 @@
+[
+  {
+    "description": "Professional services — individual at 5%",
+    "input": {
+      "amount": 500000,
+      "payeeType": "individual",
+      "serviceType": "professional",
+      "paymentDate": "2026-03-15"
+    },
+    "expected": {
+      "grossAmount": 500000,
+      "rate": 0.05,
+      "whtAmount": 25000,
+      "netPayment": 475000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-04-21"
+    }
+  },
+  {
+    "description": "Professional services — company at 10%",
+    "input": {
+      "amount": 500000,
+      "payeeType": "company",
+      "serviceType": "professional",
+      "paymentDate": "2026-03-15"
+    },
+    "expected": {
+      "grossAmount": 500000,
+      "rate": 0.10,
+      "whtAmount": 50000,
+      "netPayment": 450000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-04-21"
+    }
+  },
+  {
+    "description": "Management services — individual at 5%",
+    "input": {
+      "amount": 1000000,
+      "payeeType": "individual",
+      "serviceType": "management",
+      "paymentDate": "2026-06-10"
+    },
+    "expected": {
+      "grossAmount": 1000000,
+      "rate": 0.05,
+      "whtAmount": 50000,
+      "netPayment": 950000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-07-21"
+    }
+  },
+  {
+    "description": "Technical services — company at 10%",
+    "input": {
+      "amount": 2500000,
+      "payeeType": "company",
+      "serviceType": "technical",
+      "paymentDate": "2026-01-20"
+    },
+    "expected": {
+      "grossAmount": 2500000,
+      "rate": 0.10,
+      "whtAmount": 250000,
+      "netPayment": 2250000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-02-21"
+    }
+  },
+  {
+    "description": "Construction — individual at 5%",
+    "input": {
+      "amount": 3000000,
+      "payeeType": "individual",
+      "serviceType": "construction",
+      "paymentDate": "2026-05-01"
+    },
+    "expected": {
+      "grossAmount": 3000000,
+      "rate": 0.05,
+      "whtAmount": 150000,
+      "netPayment": 2850000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-06-21"
+    }
+  },
+  {
+    "description": "Construction — company at 5%",
+    "input": {
+      "amount": 3000000,
+      "payeeType": "company",
+      "serviceType": "construction",
+      "paymentDate": "2026-05-01"
+    },
+    "expected": {
+      "grossAmount": 3000000,
+      "rate": 0.05,
+      "whtAmount": 150000,
+      "netPayment": 2850000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-06-21"
+    }
+  },
+  {
+    "description": "Rent — individual at 10%",
+    "input": {
+      "amount": 1200000,
+      "payeeType": "individual",
+      "serviceType": "rent",
+      "paymentDate": "2026-08-15"
+    },
+    "expected": {
+      "grossAmount": 1200000,
+      "rate": 0.10,
+      "whtAmount": 120000,
+      "netPayment": 1080000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-09-21"
+    }
+  },
+  {
+    "description": "Royalty — individual at 5%",
+    "input": {
+      "amount": 800000,
+      "payeeType": "individual",
+      "serviceType": "royalty",
+      "paymentDate": "2026-04-10"
+    },
+    "expected": {
+      "grossAmount": 800000,
+      "rate": 0.05,
+      "whtAmount": 40000,
+      "netPayment": 760000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-05-21"
+    }
+  },
+  {
+    "description": "Royalty — company at 10%",
+    "input": {
+      "amount": 800000,
+      "payeeType": "company",
+      "serviceType": "royalty",
+      "paymentDate": "2026-04-10"
+    },
+    "expected": {
+      "grossAmount": 800000,
+      "rate": 0.10,
+      "whtAmount": 80000,
+      "netPayment": 720000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-05-21"
+    }
+  },
+  {
+    "description": "Dividend — individual at 10%",
+    "input": {
+      "amount": 5000000,
+      "payeeType": "individual",
+      "serviceType": "dividend",
+      "paymentDate": "2026-12-01"
+    },
+    "expected": {
+      "grossAmount": 5000000,
+      "rate": 0.10,
+      "whtAmount": 500000,
+      "netPayment": 4500000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2027-01-21"
+    }
+  },
+  {
+    "description": "Interest — company at 10%",
+    "input": {
+      "amount": 750000,
+      "payeeType": "company",
+      "serviceType": "interest",
+      "paymentDate": "2026-07-20"
+    },
+    "expected": {
+      "grossAmount": 750000,
+      "rate": 0.10,
+      "whtAmount": 75000,
+      "netPayment": 675000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-08-21"
+    }
+  },
+  {
+    "description": "Contract — individual at 5%",
+    "input": {
+      "amount": 400000,
+      "payeeType": "individual",
+      "serviceType": "contract",
+      "paymentDate": "2026-09-05"
+    },
+    "expected": {
+      "grossAmount": 400000,
+      "rate": 0.05,
+      "whtAmount": 20000,
+      "netPayment": 380000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-10-21"
+    }
+  },
+  {
+    "description": "Commission — company at 10%",
+    "input": {
+      "amount": 600000,
+      "payeeType": "company",
+      "serviceType": "commission",
+      "paymentDate": "2026-11-15"
+    },
+    "expected": {
+      "grossAmount": 600000,
+      "rate": 0.10,
+      "whtAmount": 60000,
+      "netPayment": 540000,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-12-21"
+    }
+  },
+  {
+    "description": "Consultancy — individual at 5%",
+    "input": {
+      "amount": 350000,
+      "payeeType": "individual",
+      "serviceType": "consultancy",
+      "paymentDate": "2026-02-28"
+    },
+    "expected": {
+      "grossAmount": 350000,
+      "rate": 0.05,
+      "whtAmount": 17500,
+      "netPayment": 332500,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-03-21"
+    }
+  },
+  {
+    "description": "Small company exemption — at ₦2,000,000 threshold",
+    "input": {
+      "amount": 2000000,
+      "payeeType": "company",
+      "serviceType": "professional",
+      "payeeIsSmallCompany": true,
+      "paymentDate": "2026-06-15"
+    },
+    "expected": {
+      "grossAmount": 2000000,
+      "rate": 0.10,
+      "whtAmount": 0,
+      "netPayment": 2000000,
+      "exempt": true,
+      "exemptionBasis": "NTA 2025, Section 68 — Small company WHT exemption for gross amounts at or below ₦2,000,000",
+      "creditNoteRequired": false,
+      "remittanceDeadline": "2026-07-21"
+    }
+  },
+  {
+    "description": "Small company exemption — below ₦2,000,000 threshold",
+    "input": {
+      "amount": 1500000,
+      "payeeType": "company",
+      "serviceType": "technical",
+      "payeeIsSmallCompany": true,
+      "paymentDate": "2026-04-20"
+    },
+    "expected": {
+      "grossAmount": 1500000,
+      "rate": 0.10,
+      "whtAmount": 0,
+      "netPayment": 1500000,
+      "exempt": true,
+      "exemptionBasis": "NTA 2025, Section 68 — Small company WHT exemption for gross amounts at or below ₦2,000,000",
+      "creditNoteRequired": false,
+      "remittanceDeadline": "2026-05-21"
+    }
+  },
+  {
+    "description": "Small company NOT exempt — above ₦2,000,000 threshold",
+    "input": {
+      "amount": 2000001,
+      "payeeType": "company",
+      "serviceType": "professional",
+      "payeeIsSmallCompany": true,
+      "paymentDate": "2026-06-15"
+    },
+    "expected": {
+      "grossAmount": 2000001,
+      "rate": 0.10,
+      "whtAmount": 200000.10,
+      "netPayment": 1800000.90,
+      "exempt": false,
+      "creditNoteRequired": true,
+      "remittanceDeadline": "2026-07-21"
+    }
+  },
+  {
+    "description": "Invalid service type — error case",
+    "input": {
+      "amount": 100000,
+      "payeeType": "individual",
+      "serviceType": "gambling",
+      "paymentDate": "2026-01-15"
+    },
+    "expectedError": {
+      "code": "NGTK_INVALID_SERVICE_TYPE"
+    }
+  },
+  {
+    "description": "Zero amount — edge case",
+    "input": {
+      "amount": 0,
+      "payeeType": "individual",
+      "serviceType": "professional",
+      "paymentDate": "2026-01-15"
+    },
+    "expected": {
+      "grossAmount": 0,
+      "rate": 0.05,
+      "whtAmount": 0,
+      "netPayment": 0,
+      "exempt": false,
+      "creditNoteRequired": false,
+      "remittanceDeadline": "2026-02-21"
+    }
+  }
+]

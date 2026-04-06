@@ -1,0 +1,13 @@
+{
+  "name": "@ngtaxkit/python",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Python port of ngtaxkit — managed via Turborepo",
+  "scripts": {
+    "build": "echo 'Python build handled by hatchling'",
+    "test": "pytest",
+    "lint": "ruff check src/",
+    "type-check": "mypy --strict src/",
+    "clean": "rm -rf dist build *.egg-info"
+  }
+}

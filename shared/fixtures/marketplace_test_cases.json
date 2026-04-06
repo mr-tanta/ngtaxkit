@@ -1,0 +1,270 @@
+[
+  {
+    "description": "VAT-registered seller — standard sale, 10% commission, no WHT",
+    "input": {
+      "saleAmount": 100000,
+      "platformCommission": 0.10,
+      "sellerVatRegistered": true,
+      "buyerType": "individual",
+      "serviceCategory": "standard"
+    },
+    "expected": {
+      "saleAmount": 100000,
+      "vat": {
+        "net": 100000,
+        "vat": 7500,
+        "gross": 107500,
+        "rate": 0.075,
+        "rateType": "standard"
+      },
+      "totalFromBuyer": 107500,
+      "platformCommission": {
+        "rate": 0.10,
+        "amount": 10000
+      },
+      "sellerPayout": 90000,
+      "wht": null,
+      "vatLiability": {
+        "vatAmount": 7500,
+        "collectedBy": "seller"
+      }
+    }
+  },
+  {
+    "description": "VAT-registered seller — large sale, 15% commission",
+    "input": {
+      "saleAmount": 500000,
+      "platformCommission": 0.15,
+      "sellerVatRegistered": true,
+      "buyerType": "business",
+      "serviceCategory": "standard"
+    },
+    "expected": {
+      "saleAmount": 500000,
+      "vat": {
+        "net": 500000,
+        "vat": 37500,
+        "gross": 537500,
+        "rate": 0.075,
+        "rateType": "standard"
+      },
+      "totalFromBuyer": 537500,
+      "platformCommission": {
+        "rate": 0.15,
+        "amount": 75000
+      },
+      "sellerPayout": 425000,
+      "wht": null,
+      "vatLiability": {
+        "vatAmount": 37500,
+        "collectedBy": "seller"
+      }
+    }
+  },
+  {
+    "description": "Unregistered seller — WHT deducted at professional/individual 5%",
+    "input": {
+      "saleAmount": 200000,
+      "platformCommission": 0.10,
+      "sellerVatRegistered": false,
+      "buyerType": "individual",
+      "serviceCategory": "standard",
+      "paymentDate": "2026-03-15"
+    },
+    "expected": {
+      "saleAmount": 200000,
+      "vat": {
+        "net": 200000,
+        "vat": 15000,
+        "gross": 215000,
+        "rate": 0.075,
+        "rateType": "standard"
+      },
+      "totalFromBuyer": 215000,
+      "platformCommission": {
+        "rate": 0.10,
+        "amount": 20000
+      },
+      "sellerPayout": 170000,
+      "wht": {
+        "grossAmount": 200000,
+        "rate": 0.05,
+        "whtAmount": 10000,
+        "creditNoteRequired": true
+      },
+      "vatLiability": {
+        "vatAmount": 15000,
+        "collectedBy": "platform"
+      }
+    }
+  },
+  {
+    "description": "Unregistered seller — zero-rated category, no VAT",
+    "input": {
+      "saleAmount": 50000,
+      "platformCommission": 0.10,
+      "sellerVatRegistered": false,
+      "buyerType": "individual",
+      "serviceCategory": "basic-food",
+      "paymentDate": "2026-05-10"
+    },
+    "expected": {
+      "saleAmount": 50000,
+      "vat": {
+        "net": 50000,
+        "vat": 0,
+        "gross": 50000,
+        "rate": 0,
+        "rateType": "zero-rated"
+      },
+      "totalFromBuyer": 50000,
+      "platformCommission": {
+        "rate": 0.10,
+        "amount": 5000
+      },
+      "sellerPayout": 42500,
+      "wht": {
+        "grossAmount": 50000,
+        "rate": 0.05,
+        "whtAmount": 2500,
+        "creditNoteRequired": true
+      },
+      "vatLiability": {
+        "vatAmount": 0,
+        "collectedBy": "platform"
+      }
+    }
+  },
+  {
+    "description": "Platform as VAT collection agent — registered seller",
+    "input": {
+      "saleAmount": 300000,
+      "platformCommission": 0.12,
+      "sellerVatRegistered": true,
+      "buyerType": "business",
+      "serviceCategory": "standard",
+      "platformIsVatAgent": true
+    },
+    "expected": {
+      "saleAmount": 300000,
+      "vat": {
+        "net": 300000,
+        "vat": 22500,
+        "gross": 322500,
+        "rate": 0.075,
+        "rateType": "standard"
+      },
+      "totalFromBuyer": 322500,
+      "platformCommission": {
+        "rate": 0.12,
+        "amount": 36000
+      },
+      "sellerPayout": 264000,
+      "wht": null,
+      "vatLiability": {
+        "vatAmount": 22500,
+        "collectedBy": "platform"
+      }
+    }
+  },
+  {
+    "description": "Platform as VAT agent — unregistered seller with WHT",
+    "input": {
+      "saleAmount": 150000,
+      "platformCommission": 0.08,
+      "sellerVatRegistered": false,
+      "buyerType": "individual",
+      "serviceCategory": "standard",
+      "platformIsVatAgent": true,
+      "paymentDate": "2026-07-20"
+    },
+    "expected": {
+      "saleAmount": 150000,
+      "vat": {
+        "net": 150000,
+        "vat": 11250,
+        "gross": 161250,
+        "rate": 0.075,
+        "rateType": "standard"
+      },
+      "totalFromBuyer": 161250,
+      "platformCommission": {
+        "rate": 0.08,
+        "amount": 12000
+      },
+      "sellerPayout": 130500,
+      "wht": {
+        "grossAmount": 150000,
+        "rate": 0.05,
+        "whtAmount": 7500,
+        "creditNoteRequired": true
+      },
+      "vatLiability": {
+        "vatAmount": 11250,
+        "collectedBy": "platform"
+      }
+    }
+  },
+  {
+    "description": "Exempt category — residential-rent, no VAT",
+    "input": {
+      "saleAmount": 1000000,
+      "platformCommission": 0.05,
+      "sellerVatRegistered": true,
+      "buyerType": "individual",
+      "serviceCategory": "residential-rent"
+    },
+    "expected": {
+      "saleAmount": 1000000,
+      "vat": {
+        "net": 1000000,
+        "vat": 0,
+        "gross": 1000000,
+        "rate": 0,
+        "rateType": "exempt"
+      },
+      "totalFromBuyer": 1000000,
+      "platformCommission": {
+        "rate": 0.05,
+        "amount": 50000
+      },
+      "sellerPayout": 950000,
+      "wht": null,
+      "vatLiability": {
+        "vatAmount": 0,
+        "collectedBy": "seller"
+      }
+    }
+  },
+  {
+    "description": "Small sale — ₦1,000 with 10% commission",
+    "input": {
+      "saleAmount": 1000,
+      "platformCommission": 0.10,
+      "sellerVatRegistered": true,
+      "buyerType": "individual",
+      "serviceCategory": "standard"
+    },
+    "expected": {
+      "saleAmount": 1000,
+      "vat": {
+        "net": 1000,
+        "vat": 75,
+        "gross": 1075,
+        "rate": 0.075,
+        "rateType": "standard"
+      },
+      "totalFromBuyer": 1075,
+      "platformCommission": {
+        "rate": 0.10,
+        "amount": 100
+      },
+      "sellerPayout": 900,
+      "wht": null,
+      "vatLiability": {
+        "vatAmount": 75,
+        "collectedBy": "seller"
+      }
+    }
+  }
+]
