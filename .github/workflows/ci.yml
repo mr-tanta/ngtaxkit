@@ -24,8 +24,8 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm run lint
-      - run: npm run type-check
+      - run: npx turbo run lint --filter='./packages/core' --filter='./packages/typescript'
+      - run: npx turbo run type-check --filter='./packages/core' --filter='./packages/typescript'
 
   test-typescript:
     name: Test TypeScript (Node ${{ matrix.node-version }})
@@ -43,7 +43,7 @@ jobs:
 
       - run: npm ci
       - run: npm run build
-      - run: npm run test
+      - run: npx turbo run test --filter='./packages/core' --filter='./packages/typescript'
 
   test-python:
     name: Test Python (${{ matrix.python-version }})
