@@ -1,6 +1,6 @@
 """ngtaxkit — Nigerian tax compliance SDK (Python port)."""
 
-from . import errors, invoice, marketplace, paye, payroll, pension, rates, statutory, types, utils, vat, wht
+from . import errors, invoice, marketplace, paye, payroll, pension, rates, statutory, types, ubl, utils, vat, wht
 
 __all__ = [
     "errors",
@@ -12,6 +12,7 @@ __all__ = [
     "rates",
     "statutory",
     "types",
+    "ubl",
     "utils",
     "vat",
     "wht",
