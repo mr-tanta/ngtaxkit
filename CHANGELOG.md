@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.0.3] - 2026-04-06
+
+### Added
+
+- Python invoice module — create, validate, to_firs_json, to_csv
+- Python UBL 3.0 XML generation (byte-identical parity with TypeScript)
+- Python PDF generators: invoice, WHT credit note, Form H1, payslip, VAT return (fpdf2)
+- Cross-language parity fixtures for invoice and UBL modules (12 shared test cases)
+- TypeScript parity tests for invoice and UBL against shared fixtures
+
 ## [0.0.2] - 2026-04-06
 
 ### Fixed
