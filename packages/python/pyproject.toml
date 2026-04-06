@@ -4,10 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ngtaxkit"
-version = "0.0.1"
+version = "0.0.2"
 description = "Nigerian tax compliance SDK — VAT, PAYE, WHT, Pension, Payroll, Invoicing. NTA 2025 compliant."
 requires-python = ">=3.10"
 license = "MIT"
+readme = "README.md"
 authors = [
     { name = "Abraham Tanta", email = "sir.tanta@gmail.com" },
 ]

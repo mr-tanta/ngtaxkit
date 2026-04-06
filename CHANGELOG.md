@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.0.2] - 2026-04-06
+
+### Fixed
+
+- Added package README for npm and PyPI registry pages
+- Added author social links (GitHub, LinkedIn, X)
+
 ## [0.0.1] - 2026-04-06
 
 ### Added

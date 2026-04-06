@@ -182,4 +182,8 @@ MIT — see [LICENSE](LICENSE) for details.
 
 ## Author
 
-**Abraham Tanta** ([@mr-tanta](https://github.com/mr-tanta))
+**Abraham Tanta**
+
+- [GitHub](https://github.com/mr-tanta)
+- [LinkedIn](https://www.linkedin.com/in/mr-tanta/)
+- [X](https://x.com/mr_tanta_a)
