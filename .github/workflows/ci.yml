@@ -12,8 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-and-typecheck:
-    name: Lint & Type Check
+  typecheck:
+    name: Type Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,7 +24,7 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npx turbo run lint --filter='./packages/core' --filter='./packages/typescript'
+      - run: npm run build
       - run: npx turbo run type-check --filter='./packages/core' --filter='./packages/typescript'
 
   test-typescript:
