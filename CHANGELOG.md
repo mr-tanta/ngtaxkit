@@ -1,0 +1,24 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+Format follows [Keep a Changelog](https://keepachangelog.com/).
+
+## [0.0.1] - 2026-04-06
+
+### Added
+
+- VAT calculation with standard, zero-rated, and exempt categories
+- PAYE income tax with NTA 2025 graduated brackets and reliefs
+- WHT calculation by service type with credit note support
+- Pension (CPS) employee/employer contributions per PRA 2014
+- NHF, NSITF, ITF statutory deductions
+- Marketplace transaction calculator (VAT + commission + WHT + payout)
+- Payroll batch processing with per-state aggregation and filing info
+- Invoice PDF generation with VAT line items
+- UBL 3.0 XML invoice generation for FIRSMBS e-invoicing
+- FIRS JSON and CSV export formats
+- WHT credit note, Form H1, Payslip, VAT return PDF generators
+- Python port with full calculation parity (89 shared test fixtures)
+- Versioned rate registry with runtime override support
+- Property-based test suites (fast-check + Hypothesis)
