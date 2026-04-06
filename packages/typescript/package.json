@@ -1,7 +1,7 @@
 {
-  "name": "@tantainnovative/ngtaxkit",
+  "name": "ngtaxkit",
   "version": "0.0.1",
-  "description": "Nigerian tax compliance SDK — VAT, PAYE, WHT, Pension, Payroll, Invoicing",
+  "description": "Nigerian tax compliance SDK — VAT, PAYE, WHT, Pension, Payroll, Invoicing. NTA 2025 compliant.",
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -24,6 +24,30 @@
   "engines": {
     "node": ">=18"
   },
+  "author": "Abraham Tanta <sir.tanta@gmail.com> (https://github.com/mr-tanta)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mr-tanta/ngtaxkit.git",
+    "directory": "packages/typescript"
+  },
+  "bugs": {
+    "url": "https://github.com/mr-tanta/ngtaxkit/issues"
+  },
+  "homepage": "https://ngtaxkit.dev",
+  "keywords": [
+    "nigeria",
+    "tax",
+    "vat",
+    "paye",
+    "wht",
+    "payroll",
+    "pension",
+    "invoice",
+    "compliance",
+    "nta-2025",
+    "fintech"
+  ],
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
