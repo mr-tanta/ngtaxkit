@@ -191,6 +191,59 @@ result = marketplace.calculate_transaction(
 - **Cross-language parity** — produces identical results to the [TypeScript version](https://www.npmjs.com/package/ngtaxkit), enforced by shared test fixtures
 - **Type hints** — full `py.typed` support with strict mypy compliance
 
+## Framework Integrations
+
+### Django
+
+```python
+# settings.py
+INSTALLED_APPS = [..., 'ngtaxkit.contrib.django']
+
+# models.py
+from ngtaxkit.contrib.django import TINField, NairaField, VATCategoryField
+
+class Invoice(models.Model):
+    seller_tin = TINField()
+    amount = NairaField()
+    category = VATCategoryField()
+
+# templates
+{% load ngtaxkit_tags %}
+{{ amount|naira }}        {# NGN 1,234,567.89 #}
+{{ amount|vat_amount }}   {# NGN 92,592.59 #}
+{% vat_rate "standard" %} {# 7.5% #}
+```
+
+### Flask
+
+```python
+from ngtaxkit.contrib.flask import init_app
+
+app = Flask(__name__)
+init_app(app)  # Registers /tax/vat/calculate, /tax/paye/calculate, /tax/wht/calculate + Jinja filters
+
+# In templates
+{{ amount|naira }}
+{{ amount|vat }}
+```
+
+### FastAPI
+
+```python
+from ngtaxkit.contrib.fastapi import create_router
+
+app = FastAPI()
+app.include_router(create_router(), prefix="/api")
+# Adds /api/tax/vat/calculate, /api/tax/paye/calculate, etc. with Pydantic validation
+```
+
+Install extras:
+```bash
+pip install ngtaxkit[django]   # Django fields + template tags
+pip install ngtaxkit[flask]    # Flask blueprint + Jinja filters
+pip install ngtaxkit[fastapi]  # FastAPI router + Pydantic models
+```
+
 ## License
 
 MIT — see [LICENSE](https://github.com/mr-tanta/ngtaxkit/blob/main/LICENSE)
