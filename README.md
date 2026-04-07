@@ -14,7 +14,7 @@ Despite this, **zero open-source libraries exist** — in any language — for N
 
 ```bash
 # TypeScript / JavaScript
-npm install @tantainnovative/ngtaxkit
+npm install ngtaxkit
 
 # Python
 pip install ngtaxkit
