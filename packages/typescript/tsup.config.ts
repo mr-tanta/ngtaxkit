@@ -6,6 +6,7 @@ export default defineConfig({
   dts: true,
   clean: true,
   sourcemap: true,
+  noExternal: ['@ngtaxkit/core'],
   external: ['pdfkit'],
   platform: 'neutral',
   target: 'es2022',

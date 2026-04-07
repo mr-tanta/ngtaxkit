@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ngtaxkit"
-version = "0.0.3"
+version = "0.0.4"
 description = "Nigerian tax compliance SDK — VAT, PAYE, WHT, Pension, Payroll, Invoicing. NTA 2025 compliant."
 requires-python = ">=3.10"
 license = "MIT"

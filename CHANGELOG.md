@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [0.0.4] - 2026-04-07
+
+### Fixed
+
+- Bundle @ngtaxkit/core into the npm package instead of listing it as an external dependency
+- `npm install ngtaxkit` now works without needing @ngtaxkit/core separately
+
+### Added
+
+- Django model fields (TINField, NairaField, VATCategoryField) and template tags
+- Flask blueprint with tax calculation endpoints and Jinja2 filters
+- FastAPI router with Pydantic request models
+
 ## [0.0.3] - 2026-04-06
 
 ### Added

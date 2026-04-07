@@ -1,6 +1,6 @@
 {
   "name": "ngtaxkit",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Nigerian tax compliance SDK — VAT, PAYE, WHT, Pension, Payroll, Invoicing. NTA 2025 compliant.",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -54,9 +54,6 @@
     "lint": "eslint src/",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist"
-  },
-  "dependencies": {
-    "@ngtaxkit/core": "*"
   },
   "optionalDependencies": {
     "pdfkit": "^0.18.0"
