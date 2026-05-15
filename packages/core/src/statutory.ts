@@ -2,7 +2,7 @@
 // Pure-function calculators for NHF, NSITF, and ITF statutory deductions.
 // Zero dependencies, deterministic output, banker's rounding on all monetary values.
 
-import { bankersRound } from './utils';
+import { assertNonNegativeFinite, bankersRound } from './utils';
 import { get } from './rates';
 
 // ─── Rate Data ───────────────────────────────────────────────────────────────
@@ -75,6 +75,7 @@ export interface AllStatutoryResult {
  * NHF = 2.5% of basic salary (employee contribution).
  */
 export function nhf(basicSalary: number): NhfResult {
+  assertNonNegativeFinite('basicSalary', basicSalary);
   return {
     nhfAmount: bankersRound(basicSalary * NHF_RATE),
     rate: NHF_RATE,
@@ -88,6 +89,7 @@ export function nhf(basicSalary: number): NhfResult {
  * NSITF = 1% of monthly payroll (employer-only contribution).
  */
 export function nsitf(monthlyPayroll: number): NsitfResult {
+  assertNonNegativeFinite('monthlyPayroll', monthlyPayroll);
   return {
     nsitfAmount: bankersRound(monthlyPayroll * NSITF_RATE),
     rate: NSITF_RATE,
@@ -104,6 +106,11 @@ export function nsitf(monthlyPayroll: number): NsitfResult {
  */
 export function itf(options: ItfOptions): ItfResult {
   const { annualPayroll, employeeCount, annualTurnover = 0, trainingSpend = 0 } = options;
+
+  assertNonNegativeFinite('annualPayroll', annualPayroll);
+  assertNonNegativeFinite('employeeCount', employeeCount);
+  assertNonNegativeFinite('annualTurnover', annualTurnover);
+  assertNonNegativeFinite('trainingSpend', trainingSpend);
 
   // Determine eligibility and basis
   const eligibleByEmployees = employeeCount >= ITF_MIN_EMPLOYEES;

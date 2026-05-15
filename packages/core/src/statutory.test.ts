@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as statutory from './statutory';
+import { InvalidAmountError } from './errors';
 import testCases from '../../../shared/fixtures/statutory_test_cases.json';
 
 // ─── Types for fixture data ─────────────────────────────────────────────────
@@ -109,6 +110,23 @@ describe('Statutory Module — shared fixtures', () => {
 // ─── 9.2: ITF threshold logic ───────────────────────────────────────────────
 
 describe('Statutory Module — ITF threshold logic', () => {
+  it('throws InvalidAmountError for negative NHF salary', () => {
+    expect(() => statutory.nhf(-1)).toThrow(InvalidAmountError);
+  });
+
+  it('throws InvalidAmountError for negative NSITF payroll', () => {
+    expect(() => statutory.nsitf(-1)).toThrow(InvalidAmountError);
+  });
+
+  it('throws InvalidAmountError for negative ITF employee count', () => {
+    expect(() =>
+      statutory.itf({
+        annualPayroll: 30_000_000,
+        employeeCount: -1,
+      }),
+    ).toThrow(InvalidAmountError);
+  });
+
   it('eligible at exactly 5 employees', () => {
     const result = statutory.itf({
       annualPayroll: 30_000_000,

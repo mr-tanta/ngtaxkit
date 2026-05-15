@@ -2,10 +2,11 @@
 // Pure-function VAT calculation engine for Nigerian VAT per NTA 2025.
 // Zero dependencies, deterministic output, banker's rounding on all monetary values.
 
-import type { TaxCategory, VatCalculateOptions, VatResult } from './types';
-import { InvalidAmountError, InvalidCategoryError } from './errors';
-import { bankersRound } from './utils';
+import type { CalculationExplanation, TaxCategory, VatCalculateOptions, VatResult } from './types';
+import { InvalidCategoryError } from './errors';
+import { assertNonNegativeFinite, bankersRound } from './utils';
 import { get } from './rates';
+import { collectRateSources } from './explain';
 
 // ─── Internal Helpers ────────────────────────────────────────────────────────
 
@@ -57,15 +58,21 @@ function getLegalBasis(category: TaxCategory): string {
   return get(`vat.exempt.${category}.legalBasis`) as string;
 }
 
+function getRateKey(category: TaxCategory): string {
+  if (category === 'standard') {
+    return 'vat.standard.rate';
+  }
+  if (ZERO_RATED_CATEGORIES.has(category)) {
+    return `vat.zeroRated.${category}.rate`;
+  }
+  return `vat.exempt.${category}.rate`;
+}
+
 /**
  * Validate inputs common to all VAT operations.
  */
 function validateInputs(amount: number, category: TaxCategory): void {
-  if (amount < 0) {
-    throw new InvalidAmountError(
-      `Amount must be non-negative, received ${amount}`,
-    );
-  }
+  assertNonNegativeFinite('amount', amount);
   if (!ALL_CATEGORIES.includes(category)) {
     throw new InvalidCategoryError(
       `Unknown VAT category "${category}"`,
@@ -129,6 +136,63 @@ export function calculate(options: VatCalculateOptions): VatResult {
     category,
     legalBasis,
     inputVatRecoverable,
+  };
+}
+
+/**
+ * Calculate VAT and return the source-backed reasoning used for the result.
+ */
+export function explainCalculate(options: VatCalculateOptions): CalculationExplanation<VatResult> {
+  const {
+    amount,
+    inclusive = false,
+    category = 'standard',
+    date,
+  } = options;
+  const result = calculate({ amount, inclusive, category, date });
+  const rateKeys = [getRateKey(category)];
+  const { sources, warnings } = collectRateSources(rateKeys);
+
+  const formula = result.rateType === 'standard'
+    ? inclusive
+      ? [
+          'Gross amount is VAT-inclusive.',
+          'Net amount = gross amount / (1 + rate).',
+          'VAT = gross amount - net amount.',
+        ]
+      : [
+          'Net amount is VAT-exclusive.',
+          'VAT = net amount * rate.',
+          'Gross amount = net amount + VAT.',
+        ]
+    : [
+        `VAT = 0 because category "${category}" is ${result.rateType}.`,
+        'Gross amount equals net amount.',
+      ];
+
+  const assumptions = [
+    'Amounts are denominated in Nigerian naira.',
+    "Monetary values use banker's rounding to 2 decimal places.",
+  ];
+
+  if (result.rateType === 'zero-rated') {
+    assumptions.push('The category is zero-rated, so output VAT is 0 and input VAT recoverable remains true.');
+  }
+  if (result.rateType === 'exempt') {
+    assumptions.push('The category is exempt, so output VAT is 0 and input VAT recoverable is false.');
+  }
+  if (date) {
+    assumptions.push(`The requested date ${date} is used for rate-regime selection.`);
+  }
+
+  return {
+    inputs: { amount, inclusive, category, date },
+    result,
+    formula,
+    assumptions,
+    rateKeys,
+    sources,
+    warnings,
   };
 }
 

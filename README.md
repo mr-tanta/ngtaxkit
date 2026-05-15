@@ -25,7 +25,7 @@ pip install ngtaxkit
 ### TypeScript
 
 ```typescript
-import { vat, paye, wht } from '@tantainnovative/ngtaxkit';
+import { vat, paye, wht } from 'ngtaxkit';
 
 // VAT calculation
 const vatResult = vat.calculate({ amount: 100_000 });
@@ -72,6 +72,58 @@ result = paye.calculate(gross_annual=5_000_000, pension_contributing=True)
 result = wht.calculate(amount=500_000, payee_type='company', service_type='professional')
 ```
 
+## Trust & Explainability
+
+Use `explainCalculate` / `explain_calculate` when a tax result needs to be shown to a user, saved in an audit log, or handed to another system.
+
+```typescript
+import { rates, vat } from 'ngtaxkit';
+
+const explanation = vat.explainCalculate({ amount: 100_000, category: 'standard' });
+
+explanation.result.vat;       // 7500
+explanation.rateKeys;         // ['vat.standard.rate']
+explanation.sources[0].sourceTitle; // 'Nigeria Tax Act, 2025'
+explanation.formula;          // reproducible calculation steps
+explanation.warnings;         // source review warnings, if any
+
+rates.explain('wht.serviceTypes.professional.company');
+rates.audit();
+```
+
+```python
+from ngtaxkit import rates, vat
+
+explanation = vat.explain_calculate(amount=100_000, category="standard")
+
+explanation["result"]["vat"]        # 7500
+explanation["rate_keys"]            # ["vat.standard.rate"]
+explanation["sources"][0]["source_title"]  # "Nigeria Tax Act, 2025"
+
+rates.explain("wht.serviceTypes.professional.company")
+rates.audit()
+```
+
+Source metadata is bundled offline with the packages and includes source URL, legal basis, review date, verification status, and confidence. This is not legal advice; always re-check high-impact filings against official notices and professional advice.
+
+For deterministic tool integrations, use the zero-dependency `tools` namespace:
+
+```typescript
+import { tools } from 'ngtaxkit';
+
+tools.getToolSchemas();
+tools.getOpenApiSpec();
+tools.callTool('ngtaxkit.vat.explain_calculate', { amount: 100_000, category: 'standard' });
+```
+
+```python
+from ngtaxkit import tools
+
+tools.get_tool_schemas()
+tools.get_openapi_spec()
+tools.call_tool("ngtaxkit.vat.explain_calculate", {"amount": 100_000, "category": "standard"})
+```
+
 ## Modules
 
 | Module | Description |
@@ -84,6 +136,7 @@ result = wht.calculate(amount=500_000, payee_type='company', service_type='profe
 | `marketplace` | End-to-end marketplace transaction: VAT + commission + WHT + seller payout |
 | `payroll` | Batch payroll processing with per-state aggregation and filing info |
 | `rates` | Versioned rate registry — all tax rates, brackets, and thresholds in one place |
+| `tools` | Tool schemas, OpenAPI wrapper spec, and deterministic dispatcher |
 
 ## Document Generation (TypeScript)
 
@@ -98,7 +151,7 @@ The npm package includes NTA 2025-compliant document generators:
 - **VAT Return PDF** — monthly/quarterly VAT return document
 
 ```typescript
-import { create, toPDF, toUBL, toFIRSJSON } from '@tantainnovative/ngtaxkit';
+import { create, toPDF, toUBL, toFIRSJSON } from 'ngtaxkit';
 
 const invoice = create({
   seller: { name: 'Acme Ltd', tin: '12345678-0001', address: 'Lagos' },
@@ -117,6 +170,7 @@ const json = toFIRSJSON(invoice);    // FIRS-compatible JSON
 
 - **Banker's rounding** — all monetary values use round-half-even to 2 decimal places, avoiding systematic rounding bias
 - **Legal citations** — every calculation result includes a `legalBasis` string citing the specific NTA 2025 section, for audit readiness
+- **Source-backed explanations** — VAT, PAYE, and WHT expose formula steps, source metadata, and warnings for values that need review
 - **Versioned rates** — tax rates, brackets, and thresholds are bundled as JSON and can be overridden at runtime via `rates.setCustom()` without upgrading the package
 - **Cross-language parity** — TypeScript is the source of truth; Python produces identical results for identical inputs, enforced by shared JSON test fixtures in CI
 
@@ -148,7 +202,7 @@ npm run type-check
 ```
 ├── packages/
 │   ├── core/           # @ngtaxkit/core — calculation engine (source of truth)
-│   ├── typescript/     # @tantainnovative/ngtaxkit — npm package (core + documents)
+│   ├── typescript/     # ngtaxkit — npm package (core + documents)
 │   └── python/         # ngtaxkit — PyPI package (Python port)
 ├── shared/
 │   ├── rates/          # Versioned JSON rate data (consumed by both languages)

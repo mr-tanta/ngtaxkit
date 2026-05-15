@@ -1,0 +1,70 @@
+{
+  "version": "2026.1.0",
+  "effectiveDate": "2026-01-01",
+  "legalBasis": "WHT Regulations 2024 — Withholding Tax rate schedule",
+  "smallCompanyExemption": {
+    "threshold": 2000000,
+    "legalBasis": "NTA 2025, Section 68 — Small company WHT exemption for gross amounts at or below ₦2,000,000"
+  },
+  "remittanceDeadline": {
+    "dayOfMonth": 21,
+    "description": "21st of the month following the payment date"
+  },
+  "serviceTypes": {
+    "professional": {
+      "individual": 0.05,
+      "company": 0.10,
+      "legalBasis": "WHT Regulations 2024, Schedule — Professional services"
+    },
+    "management": {
+      "individual": 0.05,
+      "company": 0.10,
+      "legalBasis": "WHT Regulations 2024, Schedule — Management services"
+    },
+    "technical": {
+      "individual": 0.05,
+      "company": 0.10,
+      "legalBasis": "WHT Regulations 2024, Schedule — Technical services"
+    },
+    "consultancy": {
+      "individual": 0.05,
+      "company": 0.10,
+      "legalBasis": "WHT Regulations 2024, Schedule — Consultancy services"
+    },
+    "commission": {
+      "individual": 0.05,
+      "company": 0.10,
+      "legalBasis": "WHT Regulations 2024, Schedule — Commission"
+    },
+    "construction": {
+      "individual": 0.05,
+      "company": 0.05,
+      "legalBasis": "WHT Regulations 2024, Schedule — Construction"
+    },
+    "contract": {
+      "individual": 0.05,
+      "company": 0.05,
+      "legalBasis": "WHT Regulations 2024, Schedule — Contracts and agency"
+    },
+    "rent": {
+      "individual": 0.10,
+      "company": 0.10,
+      "legalBasis": "WHT Regulations 2024, Schedule — Rent"
+    },
+    "royalty": {
+      "individual": 0.05,
+      "company": 0.10,
+      "legalBasis": "WHT Regulations 2024, Schedule — Royalties"
+    },
+    "dividend": {
+      "individual": 0.10,
+      "company": 0.10,
+      "legalBasis": "WHT Regulations 2024, Schedule — Dividends"
+    },
+    "interest": {
+      "individual": 0.10,
+      "company": 0.10,
+      "legalBasis": "WHT Regulations 2024, Schedule — Interest"
+    }
+  }
+}

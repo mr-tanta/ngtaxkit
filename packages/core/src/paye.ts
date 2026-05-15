@@ -3,6 +3,7 @@
 // Zero dependencies, deterministic output, banker's rounding on all monetary values.
 
 import type {
+  CalculationExplanation,
   PayeCalculateOptions,
   PayeResult,
   TaxBand,
@@ -10,9 +11,9 @@ import type {
   MonthlyDeductions,
   EmployerCosts,
 } from './types';
-import { InvalidAmountError } from './errors';
-import { bankersRound } from './utils';
+import { assertNonNegativeFinite, bankersRound } from './utils';
 import { get, type RateValue } from './rates';
+import { collectRateSources, uniqueRateKeys } from './explain';
 
 // ─── Internal Types ──────────────────────────────────────────────────────────
 
@@ -75,11 +76,8 @@ export function calculate(options: PayeCalculateOptions): PayeResult {
     rentPaidAnnual = 0,
   } = options;
 
-  if (grossAnnual < 0) {
-    throw new InvalidAmountError(
-      `Gross annual income must be non-negative, received ${grossAnnual}`,
-    );
-  }
+  assertNonNegativeFinite('grossAnnual', grossAnnual);
+  assertNonNegativeFinite('rentPaidAnnual', rentPaidAnnual);
 
   const exemptionThreshold = get('paye.exemptionThreshold') as number;
   const legalBasis = get('paye.legalBasis') as string;
@@ -192,10 +190,106 @@ export function calculate(options: PayeCalculateOptions): PayeResult {
 }
 
 /**
+ * Calculate PAYE and return the source-backed reasoning used for the result.
+ */
+export function explainCalculate(options: PayeCalculateOptions): CalculationExplanation<PayeResult> {
+  const {
+    grossAnnual,
+    pensionContributing = false,
+    nhfContributing = false,
+    rentPaidAnnual = 0,
+    disabilityStatus = false,
+    taxYear,
+  } = options;
+  const result = calculate({
+    grossAnnual,
+    pensionContributing,
+    nhfContributing,
+    rentPaidAnnual,
+    disabilityStatus,
+    taxYear,
+  });
+
+  const rateKeys = uniqueRateKeys([
+    'paye.exemptionThreshold',
+    'paye.cra.fixedAmount',
+    'paye.cra.percentOfGross',
+    'paye.cra.additionalPercentOfGross',
+    'paye.rentRelief.rate',
+    'paye.rentRelief.cap',
+    'paye.bands',
+    ...(pensionContributing ? [
+      'pension.minimumRates.employee',
+      'pension.minimumRates.employer',
+    ] : []),
+    ...(nhfContributing ? ['statutory.nhf.rate'] : []),
+    ...(result.exempt ? [] : [
+      'statutory.nsitf.rate',
+      'statutory.itf.rate',
+    ]),
+  ]);
+  const { sources, warnings } = collectRateSources(rateKeys);
+
+  const formula = result.exempt
+    ? [
+        `Gross annual income = ${grossAnnual}.`,
+        'Gross annual income is at or below the exemption threshold, so annual PAYE is 0.',
+        'Monthly PAYE = 0.',
+      ]
+    : [
+        `Gross annual income = ${grossAnnual}.`,
+        'Consolidated relief = max(CRA fixed amount, gross annual income * CRA minimum percent) + gross annual income * CRA additional percent.',
+        'Rent relief = min(rent paid * rent relief rate, rent relief cap).',
+        'Taxable income = gross annual income - total reliefs.',
+        'Annual PAYE = sum of taxable income portions multiplied by the graduated PAYE band rates.',
+        'Monthly PAYE = annual PAYE / 12.',
+      ];
+
+  if (pensionContributing) {
+    formula.push('Employee pension deduction = gross annual income * employee pension rate.');
+    formula.push('Employer pension cost = gross annual income * employer pension rate.');
+  }
+  if (nhfContributing) {
+    formula.push('NHF deduction = gross annual income * NHF rate.');
+  }
+
+  const assumptions = [
+    'Amounts are denominated in Nigerian naira.',
+    "Monetary values use banker's rounding to 2 decimal places.",
+    'Bundled 2026 PAYE rates are used for this calculation.',
+  ];
+
+  if (taxYear !== undefined) {
+    assumptions.push('taxYear is accepted for API compatibility; the current bundled registry does not switch PAYE rate files by year.');
+  }
+  if (disabilityStatus) {
+    assumptions.push('disabilityStatus is accepted for API compatibility; the current bundled registry does not add a disability-specific relief.');
+  }
+
+  return {
+    inputs: {
+      grossAnnual,
+      pensionContributing,
+      nhfContributing,
+      rentPaidAnnual,
+      disabilityStatus,
+      taxYear,
+    },
+    result,
+    formula,
+    assumptions,
+    rateKeys,
+    sources,
+    warnings,
+  };
+}
+
+/**
  * Check if a gross annual income is exempt from PAYE.
  * Income at or below ₦800,000 is exempt per NTA 2025.
  */
 export function isExempt(grossAnnual: number, _taxYear?: number): boolean {
+  assertNonNegativeFinite('grossAnnual', grossAnnual);
   const threshold = get('paye.exemptionThreshold') as number;
   return grossAnnual <= threshold;
 }
@@ -217,6 +311,9 @@ export function calculateRelief(options: PayeCalculateOptions): ReliefBreakdown 
     nhfContributing = false,
     rentPaidAnnual = 0,
   } = options;
+
+  assertNonNegativeFinite('grossAnnual', grossAnnual);
+  assertNonNegativeFinite('rentPaidAnnual', rentPaidAnnual);
 
   // CRA: max(₦200K, 1% of gross) + 20% of gross
   const craFixed = get('paye.cra.fixedAmount') as number;

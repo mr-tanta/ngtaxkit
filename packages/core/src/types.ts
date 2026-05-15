@@ -48,7 +48,72 @@ export type NigerianState =
   | 'LA' | 'NA' | 'NI' | 'OG' | 'ON' | 'OS' | 'OY' | 'PL'
   | 'RI' | 'SO' | 'TA' | 'YO' | 'ZA';
 
+/** Type of documentary source backing a bundled rate. */
+export type SourceType =
+  | 'official_act'
+  | 'official_gazette'
+  | 'regulator'
+  | 'government_portal'
+  | 'professional_copy'
+  | 'secondary_reference';
+
+/** Review status of a source-backed rate. */
+export type VerificationStatus = 'verified' | 'needs_review' | 'disputed';
+
+/** Confidence level for the source-to-rate mapping. */
+export type SourceConfidence = 'high' | 'medium' | 'low';
+
 // ─── Supporting Types ────────────────────────────────────────────────────────
+
+/** JSON-compatible value stored in the bundled rates registry. */
+export type RateSourceValue = number | string | boolean | null | RateSourceValue[] | { [key: string]: RateSourceValue };
+
+/** Source metadata fields that can back a bundled or custom rate. */
+export interface RateSourceInput {
+  sourceTitle: string;
+  sourceUrl: string;
+  sourceType: SourceType;
+  legalBasis: string;
+  effectiveDate: string;
+  lastReviewed: string;
+  verificationStatus: VerificationStatus;
+  confidence: SourceConfidence;
+  notes: string;
+}
+
+/** Source metadata for a rate key or source-backed rate prefix. */
+export interface RateSourceMetadata extends RateSourceInput {
+  key: string;
+  value: RateSourceValue;
+  metadataKey: string;
+  overridden: boolean;
+  warnings: string[];
+}
+
+/** Coverage summary for the bundled rate source metadata registry. */
+export interface RateAuditResult {
+  version: string;
+  effectiveDate: string;
+  lastReviewed: string;
+  totalKeys: number;
+  verified: number;
+  needsReview: number;
+  disputed: number;
+  missingMetadata: string[];
+  orphanedMetadata: string[];
+  sources: RateSourceMetadata[];
+}
+
+/** Calculation result plus reproducible reasoning and source metadata. */
+export interface CalculationExplanation<T> {
+  inputs: Record<string, unknown>;
+  result: T;
+  formula: string[];
+  assumptions: string[];
+  rateKeys: string[];
+  sources: RateSourceMetadata[];
+  warnings: string[];
+}
 
 /** A single PAYE graduated tax band with computed tax. */
 export interface TaxBand {

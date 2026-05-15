@@ -1,0 +1,90 @@
+{
+  "version": "2026.1.0",
+  "effectiveDate": "2026-01-01",
+  "standard": {
+    "rate": 0.075,
+    "legalBasis": "NTA 2025, Section 35(1) — VAT at 7.5% on taxable goods and services"
+  },
+  "zeroRated": {
+    "basic-food": {
+      "rate": 0,
+      "rateType": "zero-rated",
+      "inputVatRecoverable": true,
+      "legalBasis": "NTA 2025, First Schedule Part I — Basic food items"
+    },
+    "medicine": {
+      "rate": 0,
+      "rateType": "zero-rated",
+      "inputVatRecoverable": true,
+      "legalBasis": "NTA 2025, First Schedule Part I — Pharmaceutical products"
+    },
+    "medical-equipment": {
+      "rate": 0,
+      "rateType": "zero-rated",
+      "inputVatRecoverable": true,
+      "legalBasis": "NTA 2025, First Schedule Part I — Medical equipment"
+    },
+    "medical-services": {
+      "rate": 0,
+      "rateType": "zero-rated",
+      "inputVatRecoverable": true,
+      "legalBasis": "NTA 2025, First Schedule Part I — Medical services"
+    },
+    "educational-books": {
+      "rate": 0,
+      "rateType": "zero-rated",
+      "inputVatRecoverable": true,
+      "legalBasis": "NTA 2025, First Schedule Part I — Educational books and materials"
+    },
+    "tuition": {
+      "rate": 0,
+      "rateType": "zero-rated",
+      "inputVatRecoverable": true,
+      "legalBasis": "NTA 2025, First Schedule Part I — Tuition fees"
+    },
+    "electricity": {
+      "rate": 0,
+      "rateType": "zero-rated",
+      "inputVatRecoverable": true,
+      "legalBasis": "NTA 2025, First Schedule Part I — Electricity supply"
+    },
+    "export-services": {
+      "rate": 0,
+      "rateType": "zero-rated",
+      "inputVatRecoverable": true,
+      "legalBasis": "NTA 2025, First Schedule Part I — Export of services"
+    },
+    "humanitarian-goods": {
+      "rate": 0,
+      "rateType": "zero-rated",
+      "inputVatRecoverable": true,
+      "legalBasis": "NTA 2025, First Schedule Part I — Humanitarian goods and relief materials"
+    }
+  },
+  "exempt": {
+    "residential-rent": {
+      "rate": 0,
+      "rateType": "exempt",
+      "inputVatRecoverable": false,
+      "legalBasis": "NTA 2025, First Schedule Part II — Residential rent"
+    },
+    "public-transport": {
+      "rate": 0,
+      "rateType": "exempt",
+      "inputVatRecoverable": false,
+      "legalBasis": "NTA 2025, First Schedule Part II — Public transportation"
+    },
+    "financial-services": {
+      "rate": 0,
+      "rateType": "exempt",
+      "inputVatRecoverable": false,
+      "legalBasis": "NTA 2025, First Schedule Part II — Financial services"
+    },
+    "insurance": {
+      "rate": 0,
+      "rateType": "exempt",
+      "inputVatRecoverable": false,
+      "legalBasis": "NTA 2025, First Schedule Part II — Insurance services"
+    }
+  }
+}

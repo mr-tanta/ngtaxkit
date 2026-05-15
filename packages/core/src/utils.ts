@@ -1,6 +1,33 @@
 // ─── Utility Functions ────────────────────────────────────────────────────────
 // Pure functions, zero dependencies. Used across all calculation modules.
 
+import { InvalidAmountError, ValidationError } from './errors';
+
+// ─── Input Validation ───────────────────────────────────────────────────────
+
+/**
+ * Validate a monetary amount or count that must be finite and non-negative.
+ */
+export function assertNonNegativeFinite(field: string, value: number): void {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0) {
+    throw new InvalidAmountError(
+      `${field} must be a finite non-negative number, received ${String(value)}`,
+    );
+  }
+}
+
+/**
+ * Validate a fractional rate such as 0.10 for 10%.
+ */
+export function assertRateBetweenZeroAndOne(field: string, value: number): void {
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value > 1) {
+    throw new ValidationError(
+      `${field} must be a finite number between 0 and 1, received ${String(value)}`,
+      [{ field, message: 'Must be a finite number between 0 and 1' }],
+    );
+  }
+}
+
 /**
  * Banker's rounding (round-half-even) to 2 decimal places.
  * When the value is exactly halfway (0.5), rounds to the nearest even number.

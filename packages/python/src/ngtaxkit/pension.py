@@ -3,18 +3,19 @@
 from __future__ import annotations
 
 import datetime
+import math
 
 from .errors import InvalidPensionRateError
-from .rates import get
+from .rates import get_float, get_int, get_str
 from .types import PensionResult
-from .utils import add_working_days, bankers_round
+from .utils import add_working_days, assert_non_negative_finite, bankers_round
 
 # ─── Rate Data ────────────────────────────────────────────────────────────────
 
-MIN_EMPLOYEE_RATE: float = get("pension.minimumRates.employee")  # type: ignore[assignment]
-MIN_EMPLOYER_RATE: float = get("pension.minimumRates.employer")  # type: ignore[assignment]
-DEADLINE_WORKING_DAYS: int = get("pension.remittance.deadlineWorkingDays")  # type: ignore[assignment]
-LEGAL_BASIS: str = get("pension.legalBasis")  # type: ignore[assignment]
+MIN_EMPLOYEE_RATE = get_float("pension.minimumRates.employee")
+MIN_EMPLOYER_RATE = get_float("pension.minimumRates.employer")
+DEADLINE_WORKING_DAYS = get_int("pension.remittance.deadlineWorkingDays")
+LEGAL_BASIS = get_str("pension.legalBasis")
 REMITTANCE_METHOD = "PFA transfer"
 
 # ─── Public API ───────────────────────────────────────────────────────────────
@@ -36,15 +37,27 @@ def calculate(
     eff_employee_rate = employee_rate if employee_rate is not None else MIN_EMPLOYEE_RATE
     eff_employer_rate = employer_rate if employer_rate is not None else MIN_EMPLOYER_RATE
 
+    assert_non_negative_finite("basic_salary", basic_salary)
+    assert_non_negative_finite("housing_allowance", housing_allowance)
+    assert_non_negative_finite("transport_allowance", transport_allowance)
+
     # Validate minimum rates
-    if eff_employee_rate < MIN_EMPLOYEE_RATE:
+    if (
+        not isinstance(eff_employee_rate, (int, float))
+        or not math.isfinite(eff_employee_rate)
+        or eff_employee_rate < MIN_EMPLOYEE_RATE
+    ):
         raise InvalidPensionRateError(
             f"Employee pension rate {eff_employee_rate} is below the legal minimum of "
             f"{MIN_EMPLOYEE_RATE} ({MIN_EMPLOYEE_RATE * 100}%)",
             "PRA 2014, Section 4(1)",
         )
 
-    if eff_employer_rate < MIN_EMPLOYER_RATE:
+    if (
+        not isinstance(eff_employer_rate, (int, float))
+        or not math.isfinite(eff_employer_rate)
+        or eff_employer_rate < MIN_EMPLOYER_RATE
+    ):
         raise InvalidPensionRateError(
             f"Employer pension rate {eff_employer_rate} is below the legal minimum of "
             f"{MIN_EMPLOYER_RATE} ({MIN_EMPLOYER_RATE * 100}%)",

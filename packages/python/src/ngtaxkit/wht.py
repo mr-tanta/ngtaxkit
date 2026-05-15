@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import datetime
 
-from .errors import InvalidServiceTypeError
-from .rates import get
-from .types import WhtResult, WhtServiceType
-from .utils import bankers_round
+from .errors import InvalidServiceTypeError, ValidationError
+from .explain import collect_rate_sources, unique_rate_keys
+from .rates import get_float, get_int, get_str
+from .types import CalculationExplanation, WhtResult
+from .utils import assert_non_negative_finite, bankers_round
 
 # ─── Internal Helpers ─────────────────────────────────────────────────────────
 
@@ -25,9 +26,9 @@ ALL_SERVICE_TYPES: list[str] = [
     "interest",
 ]
 
-SMALL_COMPANY_THRESHOLD: float = get("wht.smallCompanyExemption.threshold")  # type: ignore[assignment]
-SMALL_COMPANY_LEGAL_BASIS: str = get("wht.smallCompanyExemption.legalBasis")  # type: ignore[assignment]
-REMITTANCE_DAY: int = get("wht.remittanceDeadline.dayOfMonth")  # type: ignore[assignment]
+SMALL_COMPANY_THRESHOLD = get_float("wht.smallCompanyExemption.threshold")
+SMALL_COMPANY_LEGAL_BASIS = get_str("wht.smallCompanyExemption.legalBasis")
+REMITTANCE_DAY = get_int("wht.remittanceDeadline.dayOfMonth")
 
 
 def _validate_service_type(service_type: str) -> None:
@@ -35,6 +36,14 @@ def _validate_service_type(service_type: str) -> None:
         raise InvalidServiceTypeError(
             f'Unknown WHT service type "{service_type}"',
             ALL_SERVICE_TYPES,
+        )
+
+
+def _validate_payee_type(payee_type: str) -> None:
+    if payee_type not in ("individual", "company"):
+        raise ValidationError(
+            f'Unknown WHT payee type "{payee_type}"',
+            [{"field": "payee_type", "message": 'Must be "individual" or "company"'}],
         )
 
 
@@ -65,10 +74,12 @@ def calculate(
     payment_date: str | None = None,
 ) -> WhtResult:
     """Calculate WHT on a payment."""
+    assert_non_negative_finite("amount", amount)
+    _validate_payee_type(payee_type)
     _validate_service_type(service_type)
 
     rate = get_rate(service_type, payee_type)
-    legal_basis: str = get(f"wht.serviceTypes.{service_type}.legalBasis")  # type: ignore[assignment]
+    legal_basis = get_str(f"wht.serviceTypes.{service_type}.legalBasis")
 
     # Determine payment date for remittance deadline
     effective_date = payment_date or datetime.date.today().isoformat()
@@ -104,10 +115,82 @@ def calculate(
     )
 
 
+def explain_calculate(
+    amount: float,
+    payee_type: str,
+    service_type: str,
+    payee_is_small_company: bool = False,
+    payee_tin: str | None = None,
+    payment_date: str | None = None,
+) -> CalculationExplanation:
+    """Calculate WHT and return the source-backed reasoning used for the result."""
+    effective_payment_date = payment_date or datetime.date.today().isoformat()
+    result = calculate(
+        amount=amount,
+        payee_type=payee_type,
+        service_type=service_type,
+        payee_is_small_company=payee_is_small_company,
+        payee_tin=payee_tin,
+        payment_date=effective_payment_date,
+    )
+
+    rate_keys = [
+        f"wht.serviceTypes.{service_type}.{payee_type}",
+        "wht.remittanceDeadline.dayOfMonth",
+    ]
+    if payee_is_small_company:
+        rate_keys.append("wht.smallCompanyExemption.threshold")
+    rate_keys = unique_rate_keys(rate_keys)
+    sources, warnings = collect_rate_sources(rate_keys)
+
+    if result["exempt"]:
+        formula = [
+            f"Gross amount = {amount}.",
+            "Small company exemption applies because the payee is marked as a small company and the gross amount is at or below the exemption threshold.",
+            "WHT amount = 0.",
+            "Net payment = gross amount.",
+        ]
+    else:
+        formula = [
+            f"Gross amount = {amount}.",
+            "WHT amount = gross amount * withholding rate.",
+            "Net payment = gross amount - WHT amount.",
+            "Remittance deadline = configured day of the month following the payment date.",
+        ]
+
+    assumptions = [
+        "Amounts are denominated in Nigerian naira.",
+        "Monetary values use banker's rounding to 2 decimal places.",
+        f"Payment date {effective_payment_date} is used for the remittance deadline.",
+    ]
+    if not payee_tin:
+        assumptions.append(
+            "No payee TIN was supplied; the bundled WHT calculator currently does not alter rates by TIN availability."
+        )
+
+    return CalculationExplanation(
+        inputs={
+            "amount": amount,
+            "payee_type": payee_type,
+            "service_type": service_type,
+            "payee_is_small_company": payee_is_small_company,
+            "payee_tin": payee_tin,
+            "payment_date": effective_payment_date,
+        },
+        result=result,
+        formula=formula,
+        assumptions=assumptions,
+        rate_keys=rate_keys,
+        sources=sources,
+        warnings=warnings,
+    )
+
+
 def get_rate(service_type: str, payee_type: str) -> float:
     """Get the WHT rate for a service type and payee type."""
     _validate_service_type(service_type)
-    return get(f"wht.serviceTypes.{service_type}.{payee_type}")  # type: ignore[return-value]
+    _validate_payee_type(payee_type)
+    return get_float(f"wht.serviceTypes.{service_type}.{payee_type}")
 
 
 def list_service_types() -> list[str]:

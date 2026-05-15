@@ -494,7 +494,8 @@ export function toFIRSJSON(invoice: Invoice): string {
  * Generate a CSV string with one row per invoice.
  * Columns: Invoice Number, Date, Buyer, Seller, Subtotal, VAT, Total, Status
  */
-export function toCSV(invoices: Invoice[]): string {
+export function toCSV(input: Invoice | Invoice[]): string {
+  const invoices = Array.isArray(input) ? input : [input];
   const header = 'Invoice Number,Date,Buyer,Seller,Subtotal,VAT,Total,Status';
   const rows = invoices.map((inv) => {
     const status = inv.validation.valid ? 'valid' : 'invalid';

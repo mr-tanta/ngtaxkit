@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { calculate, isExempt, getBrackets, calculateRelief } from './paye';
+import { calculate, explainCalculate, isExempt, getBrackets, calculateRelief } from './paye';
 import { InvalidAmountError } from './errors';
 
 // ─── Load shared fixtures ────────────────────────────────────────────────────
@@ -108,6 +108,14 @@ describe('PAYE Module — exemption threshold', () => {
   it('throws InvalidAmountError for negative gross', () => {
     expect(() => calculate({ grossAnnual: -1 })).toThrow(InvalidAmountError);
   });
+
+  it('throws InvalidAmountError for NaN gross', () => {
+    expect(() => calculate({ grossAnnual: Number.NaN })).toThrow(InvalidAmountError);
+  });
+
+  it('throws InvalidAmountError for negative rent paid', () => {
+    expect(() => calculate({ grossAnnual: 3_000_000, rentPaidAnnual: -1 })).toThrow(InvalidAmountError);
+  });
 });
 
 // ─── 6.2: Unit Tests — isExempt utility ─────────────────────────────────────
@@ -206,6 +214,43 @@ describe('PAYE Module — full result structure', () => {
         result.monthlyDeductions.nhf,
       ),
     );
+  });
+});
+
+describe('PAYE Module — explainCalculate()', () => {
+  it('returns the PAYE result with formulas, rate keys, source metadata, and review warnings', () => {
+    const options = {
+      grossAnnual: 5_000_000,
+      pensionContributing: true,
+      nhfContributing: true,
+      rentPaidAnnual: 1_200_000,
+    };
+    const explanation = explainCalculate(options);
+
+    expect(explanation.result).toEqual(calculate(options));
+    expect(explanation.formula.some((step) => step.includes('Taxable income = gross annual income - total reliefs'))).toBe(true);
+    expect(explanation.rateKeys).toEqual(expect.arrayContaining([
+      'paye.exemptionThreshold',
+      'paye.cra.fixedAmount',
+      'paye.cra.percentOfGross',
+      'paye.cra.additionalPercentOfGross',
+      'paye.rentRelief.rate',
+      'paye.rentRelief.cap',
+      'paye.bands',
+      'pension.minimumRates.employee',
+      'pension.minimumRates.employer',
+      'statutory.nhf.rate',
+    ]));
+    expect(explanation.sources.some((source) => source.key === 'paye.bands')).toBe(true);
+    expect(explanation.warnings.some((warning) => warning.includes('statutory.nhf.rate'))).toBe(true);
+  });
+
+  it('explains PAYE exemption threshold decisions', () => {
+    const explanation = explainCalculate({ grossAnnual: 800_000 });
+
+    expect(explanation.result.exempt).toBe(true);
+    expect(explanation.rateKeys).toContain('paye.exemptionThreshold');
+    expect(explanation.formula.some((step) => step.includes('Gross annual income is at or below the exemption threshold'))).toBe(true);
   });
 });
 

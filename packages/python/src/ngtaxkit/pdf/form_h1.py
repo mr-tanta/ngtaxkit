@@ -7,7 +7,7 @@ from typing import Any
 from . import _require_fpdf2
 from .helpers import (
     COLOR_HEADER_BG, COLOR_LINE, COLOR_PRIMARY, COLOR_SECONDARY, COLOR_WHITE,
-    CONTENT_WIDTH, PAGE_MARGIN, format_currency, format_date,
+    format_currency, format_date,
 )
 
 

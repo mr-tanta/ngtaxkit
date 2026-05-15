@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
-import { calculate, extract, isTaxable, isZeroRated, isExempt, getRate, listCategories } from './vat';
+import { calculate, explainCalculate, extract, isTaxable, isZeroRated, isExempt, getRate, listCategories } from './vat';
 import { InvalidAmountError, InvalidCategoryError } from './errors';
 import type { TaxCategory } from './types';
 
@@ -76,6 +76,34 @@ describe('VAT Module — standard category', () => {
   });
 });
 
+describe('VAT Module — explainCalculate()', () => {
+  it('returns the VAT result with formula steps and source metadata', () => {
+    const options = { amount: 10_000, category: 'standard' as const };
+    const explanation = explainCalculate(options);
+
+    expect(explanation.result).toEqual(calculate(options));
+    expect(explanation.inputs).toEqual({
+      amount: 10_000,
+      inclusive: false,
+      category: 'standard',
+      date: undefined,
+    });
+    expect(explanation.formula.some((step) => step.includes('VAT = net amount * rate'))).toBe(true);
+    expect(explanation.rateKeys).toContain('vat.standard.rate');
+    expect(explanation.sources.some((source) => source.key === 'vat.standard.rate')).toBe(true);
+    expect(explanation.warnings).toEqual([]);
+  });
+
+  it('explains zero-rated VAT categories with the category source key', () => {
+    const explanation = explainCalculate({ amount: 5_000, category: 'medicine' });
+
+    expect(explanation.result.vat).toBe(0);
+    expect(explanation.rateKeys).toContain('vat.zeroRated.medicine.rate');
+    expect(explanation.sources.some((source) => source.key === 'vat.zeroRated.medicine.rate')).toBe(true);
+    expect(explanation.assumptions.some((assumption) => assumption.includes('input VAT recoverable'))).toBe(true);
+  });
+});
+
 describe('VAT Module — zero-rated categories', () => {
   const zeroRated: TaxCategory[] = [
     'basic-food', 'medicine', 'medical-equipment', 'medical-services',
@@ -128,6 +156,14 @@ describe('VAT Module — inclusive extraction', () => {
 describe('VAT Module — error cases', () => {
   it('throws InvalidAmountError for negative amount', () => {
     expect(() => calculate({ amount: -100, category: 'standard' })).toThrow(InvalidAmountError);
+  });
+
+  it('throws InvalidAmountError for NaN amount', () => {
+    expect(() => calculate({ amount: Number.NaN, category: 'standard' })).toThrow(InvalidAmountError);
+  });
+
+  it('throws InvalidAmountError for infinite amount', () => {
+    expect(() => calculate({ amount: Number.POSITIVE_INFINITY, category: 'standard' })).toThrow(InvalidAmountError);
   });
 
   it('throws InvalidCategoryError for unknown category', () => {

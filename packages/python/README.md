@@ -17,7 +17,9 @@ Optional extras:
 
 ```bash
 pip install ngtaxkit[pdf]    # PDF generation (fpdf2)
-pip install ngtaxkit[cloud]  # Cloud API client (httpx)
+pip install ngtaxkit[django] # Django fields + template tags
+pip install ngtaxkit[flask]  # Flask blueprint + Jinja filters
+pip install ngtaxkit[fastapi]  # FastAPI router + Pydantic models
 ```
 
 ## Quick Start
@@ -109,6 +111,42 @@ result = payroll.calculate_batch([
 #   }
 ```
 
+## Trust & Explainability
+
+Every bundled rate can be explained with source metadata, and VAT/PAYE/WHT can return a calculation trace for audit logs, user-facing receipts, and integrations.
+
+```python
+from ngtaxkit import rates, vat, paye, wht
+
+trace = vat.explain_calculate(amount=100_000, category="standard")
+trace["result"]["vat"]       # 7500
+trace["formula"]             # reproducible calculation steps
+trace["rate_keys"]           # ["vat.standard.rate"]
+trace["sources"][0]          # source URL, legal basis, review date, confidence
+trace["warnings"]            # non-empty if a source is needs_review/disputed
+
+rates.explain("paye.exemptionThreshold")
+rates.audit()
+
+paye.explain_calculate(gross_annual=5_000_000, pension_contributing=True)
+wht.explain_calculate(amount=500_000, payee_type="company", service_type="professional")
+```
+
+Source metadata is bundled offline. Treat it as developer evidence, not legal advice; re-check high-impact filings against official notices and professional advice.
+
+For deterministic tool integrations, use the `tools` namespace:
+
+```python
+from ngtaxkit import tools
+
+tools.get_tool_schemas()     # JSON Schema-compatible tool definitions
+tools.get_openapi_spec()     # OpenAPI 3.1 wrapper shape
+tools.call_tool(
+    "ngtaxkit.vat.explain_calculate",
+    {"amount": 100_000, "category": "standard"},
+)
+```
+
 ## Modules
 
 | Module | Description |
@@ -121,6 +159,7 @@ result = payroll.calculate_batch([
 | `marketplace` | End-to-end marketplace transaction: VAT + commission + WHT + payout |
 | `payroll` | Batch payroll with per-state aggregation and filing info |
 | `rates` | Versioned rate registry — all rates, brackets, and thresholds |
+| `tools` | JSON schemas, OpenAPI wrapper spec, and deterministic dispatcher |
 
 ## Statutory Deductions
 
@@ -187,6 +226,7 @@ result = marketplace.calculate_transaction(
 
 - **Banker's rounding** — all monetary values use round-half-even to 2 decimal places (Python's `ROUND_HALF_EVEN`)
 - **Legal citations** — every result includes a `legal_basis` string citing the NTA 2025 section
+- **Source-backed explanations** — VAT, PAYE, and WHT expose formula steps, source metadata, and warnings for values that need review
 - **Versioned rates** — bundled as JSON; override at runtime via `rates.set_custom()`
 - **Cross-language parity** — produces identical results to the [TypeScript version](https://www.npmjs.com/package/ngtaxkit), enforced by shared test fixtures
 - **Type hints** — full `py.typed` support with strict mypy compliance

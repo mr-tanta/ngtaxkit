@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 Format follows [Keep a Changelog](https://keepachangelog.com/).
 
+## [Unreleased]
+
+## [0.1.0] - 2026-05-16
+
+### Added
+
+- Source-backed rate explanations through `rates.explain()` and `rates.audit()` in TypeScript and Python
+- VAT, PAYE, and WHT calculation explanations with formula steps, rate keys, source metadata, and warnings
+- Tool schemas, OpenAPI wrapper specs, and deterministic `tools.callTool` / `tools.call_tool` dispatchers
+- Bundled source metadata JSON for NTA 2025, WHT Regulations 2024, PRA 2014, and statutory/state filing references
+- CI installed-artifact smoke tests for npm tarballs and Python wheels
+- Release checklist covering code gates, artifact gates, rate-source review, and changelog categories
+- Trust, rate registry, and tool usage documentation
+
+### Fixed
+
+- Bundle Python rate JSON files in the wheel so installed PyPI packages can load rates without the monorepo checkout
+- Validate finite, non-negative monetary inputs consistently across VAT, PAYE, WHT, Pension, Statutory, and Marketplace calculators
+- Reject invalid WHT payee types and invalid marketplace commission rates before calculation
+- Remove leftover cloud stubs and Python cloud extra from the public product packages
+- Update public package references to the published npm package name `ngtaxkit`
+- Make lint and type-check scripts pass with the declared TypeScript and Python toolchains
+
 ## [0.0.5] - 2026-04-07
 
 ### Fixed

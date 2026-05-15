@@ -10,6 +10,7 @@ export * as statutory from './statutory';
 export * as marketplace from './marketplace';
 export * as payroll from './payroll';
 export * as rates from './rates';
+export * as tools from './tools';
 
 // ─── Type Re-exports ─────────────────────────────────────────────────────────
 export type {
@@ -17,7 +18,15 @@ export type {
   TaxCategory,
   WhtServiceType,
   NigerianState,
+  SourceType,
+  VerificationStatus,
+  SourceConfidence,
   // Supporting types
+  RateSourceValue,
+  RateSourceInput,
+  RateSourceMetadata,
+  RateAuditResult,
+  CalculationExplanation,
   TaxBand,
   CommissionBreakdown,
   VatLiability,
@@ -46,6 +55,13 @@ export type {
   EmployeeInput,
   PayrollBatchResult,
 } from './types';
+
+export type {
+  ToolName,
+  JsonSchema,
+  ToolSchema,
+  OpenApiSpec,
+} from './tools';
 
 // ─── Error Re-exports ────────────────────────────────────────────────────────
 export {

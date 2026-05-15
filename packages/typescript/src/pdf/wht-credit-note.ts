@@ -2,9 +2,9 @@
 // Generates WHT credit note PDFs using pdfkit — no headless browser required.
 // Returns a Buffer, performs no file I/O. Serverless-compatible.
 
-import PDFDocument from 'pdfkit';
-
 // ─── Types ───────────────────────────────────────────────────────────────────
+
+import { loadPDFDocument } from './load-pdfkit';
 
 export interface WhtCreditNoteParty {
   name: string;
@@ -97,7 +97,9 @@ export function create(options: WhtCreditNoteOptions): WhtCreditNote {
  * Renders: deductor TIN, beneficiary TIN, gross amount, WHT rate,
  * WHT amount, net payment, remittance receipt number, legal basis.
  */
-export function toPDF(note: WhtCreditNote): Promise<Buffer> {
+export async function toPDF(note: WhtCreditNote): Promise<Buffer> {
+  const PDFDocument = await loadPDFDocument();
+
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'A4',

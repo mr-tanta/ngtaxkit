@@ -2,8 +2,8 @@
 // Generates professional PDF invoices using pdfkit — no headless browser required.
 // Returns a Buffer, performs no file I/O. Serverless-compatible.
 
-import PDFDocument from 'pdfkit';
 import type { Invoice } from '../invoice';
+import { loadPDFDocument } from './load-pdfkit';
 
 // ─── Formatting Helpers ──────────────────────────────────────────────────────
 
@@ -44,7 +44,9 @@ const COLOR_LINE = '#cccccc';
  * Renders: letterhead, TAX INVOICE header, buyer details, line items table,
  * VAT breakdown, payment instructions, and footer with legal references.
  */
-export function toPDF(invoice: Invoice): Promise<Buffer> {
+export async function toPDF(invoice: Invoice): Promise<Buffer> {
+  const PDFDocument = await loadPDFDocument();
+
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'A4',

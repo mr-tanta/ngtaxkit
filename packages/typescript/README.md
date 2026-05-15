@@ -103,6 +103,42 @@ const batch = payroll.calculateBatch([
 //   }
 ```
 
+## Trust & Explainability
+
+Every bundled rate can be explained with source metadata, and VAT/PAYE/WHT can return a calculation trace for audit logs, user-facing receipts, and integrations.
+
+```typescript
+import { rates, vat, paye, wht } from 'ngtaxkit';
+
+const vatTrace = vat.explainCalculate({ amount: 100_000, category: 'standard' });
+vatTrace.result.vat;       // 7500
+vatTrace.formula;          // ['Net amount is VAT-exclusive.', 'VAT = net amount * rate.', ...]
+vatTrace.rateKeys;         // ['vat.standard.rate']
+vatTrace.sources[0];       // source URL, legal basis, review date, confidence
+vatTrace.warnings;         // non-empty if a source is marked needs_review/disputed
+
+rates.explain('paye.exemptionThreshold');
+rates.audit();
+
+paye.explainCalculate({ grossAnnual: 5_000_000, pensionContributing: true });
+wht.explainCalculate({ amount: 500_000, payeeType: 'company', serviceType: 'professional' });
+```
+
+Source metadata is bundled offline. Treat it as developer evidence, not legal advice; re-check high-impact filings against official notices and professional advice.
+
+For deterministic tool integrations, use the `tools` namespace:
+
+```typescript
+import { tools } from 'ngtaxkit';
+
+tools.getToolSchemas();     // JSON Schema-compatible tool definitions
+tools.getOpenApiSpec();     // OpenAPI 3.1 wrapper shape
+tools.callTool('ngtaxkit.vat.explain_calculate', {
+  amount: 100_000,
+  category: 'standard',
+});
+```
+
 ## Document Generation
 
 Generate NTA 2025-compliant documents from calculation results:
@@ -150,6 +186,7 @@ vatReturn.toPDF(vatData);        // Monthly/quarterly VAT return
 | `marketplace` | End-to-end marketplace transaction: VAT + commission + WHT + payout |
 | `payroll` | Batch payroll with per-state aggregation and filing info |
 | `rates` | Versioned rate registry — all rates, brackets, and thresholds |
+| `tools` | JSON schemas, OpenAPI wrapper spec, and deterministic dispatcher |
 
 ## VAT Categories
 
@@ -203,8 +240,12 @@ import { rates } from 'ngtaxkit';
 rates.setCustom({ 'vat.standard.rate': 0.10 });  // hypothetical 10% VAT
 
 // Check current rate version
-rates.getVersion();       // '2026.1'
+rates.getVersion();       // '2026.1.0'
 rates.getEffectiveDate(); // '2026-01-01'
+
+// Explain and audit bundled source metadata
+rates.explain('vat.standard.rate');
+rates.audit();
 
 // Reset to bundled rates
 rates.clearCustom();

@@ -2,9 +2,9 @@
 // Generates employee payslip PDFs using pdfkit.
 // Returns a Buffer, performs no file I/O. Serverless-compatible.
 
-import PDFDocument from 'pdfkit';
-
 // ─── Types ───────────────────────────────────────────────────────────────────
+
+import { loadPDFDocument } from './load-pdfkit';
 
 export interface PayslipEmployer {
   name: string;
@@ -133,7 +133,9 @@ export function generate(options: PayslipOptions): Payslip {
  * Renders: company header, employee details, earnings table, deductions table,
  * summary (gross, deductions, net), employer contributions.
  */
-export function toPDF(slip: Payslip): Promise<Buffer> {
+export async function toPDF(slip: Payslip): Promise<Buffer> {
+  const PDFDocument = await loadPDFDocument();
+
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'A4',

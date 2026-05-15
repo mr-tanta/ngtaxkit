@@ -2,9 +2,9 @@
 // Generates VAT return summary PDFs using pdfkit.
 // Returns a Buffer, performs no file I/O. Serverless-compatible.
 
-import PDFDocument from 'pdfkit';
-
 // ─── Types ───────────────────────────────────────────────────────────────────
+
+import { loadPDFDocument } from './load-pdfkit';
 
 export interface VatReturnInvoice {
   invoiceNumber: string;
@@ -152,7 +152,9 @@ export function generate(options: VatReturnOptions): VatReturn {
  * Renders: business details, period, output VAT, input VAT, net VAT payable,
  * breakdown by rate type, invoice count, filing deadline.
  */
-export function toPDF(ret: VatReturn): Promise<Buffer> {
+export async function toPDF(ret: VatReturn): Promise<Buffer> {
+  const PDFDocument = await loadPDFDocument();
+
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'A4',

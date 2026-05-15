@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal, TypedDict
+from typing import Any, Literal, TypedDict
 
 # ─── Literal Types ────────────────────────────────────────────────────────────
 
@@ -48,8 +48,74 @@ NigerianState = Literal[
 PayeeType = Literal["individual", "company"]
 BuyerType = Literal["individual", "business"]
 RateType = Literal["standard", "zero-rated", "exempt"]
+SourceType = Literal[
+    "official_act",
+    "official_gazette",
+    "regulator",
+    "government_portal",
+    "professional_copy",
+    "secondary_reference",
+]
+VerificationStatus = Literal["verified", "needs_review", "disputed"]
+SourceConfidence = Literal["high", "medium", "low"]
 
 # ─── Supporting Types ─────────────────────────────────────────────────────────
+
+
+class RateSourceMetadata(TypedDict):
+    key: str
+    value: Any
+    metadata_key: str
+    overridden: bool
+    warnings: list[str]
+    source_title: str
+    source_url: str
+    source_type: SourceType
+    legal_basis: str
+    effective_date: str
+    last_reviewed: str
+    verification_status: VerificationStatus
+    confidence: SourceConfidence
+    notes: str
+
+
+class RateAuditResult(TypedDict):
+    version: str
+    effective_date: str
+    last_reviewed: str
+    total_keys: int
+    verified: int
+    needs_review: int
+    disputed: int
+    missing_metadata: list[str]
+    orphaned_metadata: list[str]
+    sources: list[RateSourceMetadata]
+
+
+class CalculationExplanation(TypedDict):
+    inputs: dict[str, Any]
+    result: Any
+    formula: list[str]
+    assumptions: list[str]
+    rate_keys: list[str]
+    sources: list[RateSourceMetadata]
+    warnings: list[str]
+
+
+JsonSchema = dict[str, Any]
+
+
+class ToolSchema(TypedDict):
+    name: str
+    description: str
+    input_schema: JsonSchema
+    output_schema: JsonSchema
+
+
+class OpenApiSpec(TypedDict):
+    openapi: str
+    info: dict[str, str]
+    paths: dict[str, Any]
 
 
 class TaxBand(TypedDict):

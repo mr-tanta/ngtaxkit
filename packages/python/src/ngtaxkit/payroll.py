@@ -3,14 +3,13 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any
+from typing import Any, cast
 
 from . import paye as paye_module
 from .errors import InvalidStateError
-from .rates import get
+from .rates import get_dict
 from .types import (
     NigerianState,
-    PayeResult,
     PayrollBatchResult,
     PayrollEmployeeResult,
     PayrollTotals,
@@ -21,8 +20,8 @@ from .utils import bankers_round, get_remittance_deadline
 
 def _get_valid_state_codes() -> list[str]:
     """Get all valid state codes from the rates registry."""
-    jurisdictions = get("state_filing.jurisdictions")
-    return list(jurisdictions.keys())  # type: ignore[union-attr]
+    jurisdictions = get_dict("state_filing.jurisdictions")
+    return list(jurisdictions.keys())
 
 
 def _validate_state_code(state_code: str, valid_states: list[str]) -> None:
@@ -69,6 +68,7 @@ def calculate_batch(
     state_groups: dict[str, dict[str, Any]] = {}
 
     for emp in employees:
+        state = cast(NigerianState, emp["state_of_residence"])
         paye_result = paye_module.calculate(
             gross_annual=emp["gross_annual"],
             pension_contributing=emp.get("pension_contributing", False),
@@ -80,12 +80,11 @@ def calculate_batch(
             **paye_result,
             id=emp.get("id"),
             name=emp["name"],
-            state_of_residence=emp["state_of_residence"],
+            state_of_residence=state,
         )
         employee_results.append(enriched)
 
         # Group by state
-        state = emp["state_of_residence"]
         if state not in state_groups:
             state_groups[state] = {
                 "employees": [],
@@ -108,21 +107,22 @@ def calculate_batch(
     today = f"{current_year}-{datetime.date.today().month:02d}-01"
 
     for state_code, group in state_groups.items():
-        state_data = get(f"state_filing.jurisdictions.{state_code}")
+        typed_state_code = cast(NigerianState, state_code)
+        state_data = get_dict(f"state_filing.jurisdictions.{state_code}")
 
         by_state[state_code] = StatePayrollSummary(
-            state_code=state_code,  # type: ignore[arg-type]
-            state_name=state_data["name"],  # type: ignore[index]
-            irs_name=state_data["irsName"],  # type: ignore[index]
+            state_code=typed_state_code,
+            state_name=state_data["name"],
+            irs_name=state_data["irsName"],
             employee_count=len(group["employees"]),
             total_gross=group["total_gross"],
             total_paye=group["total_paye"],
             total_pension=group["total_pension"],
             total_nhf=group["total_nhf"],
-            filing_methods=state_data["filingMethods"],  # type: ignore[index]
-            portal_url=state_data["portalUrl"],  # type: ignore[index]
-            email=state_data["email"],  # type: ignore[index]
-            address=state_data["address"],  # type: ignore[index]
+            filing_methods=state_data["filingMethods"],
+            portal_url=state_data["portalUrl"],
+            email=state_data["email"],
+            address=state_data["address"],
             monthly_remittance_deadline=get_remittance_deadline(today, 10),
             form_h1_deadline=_get_form_h1_deadline(current_year),
         )

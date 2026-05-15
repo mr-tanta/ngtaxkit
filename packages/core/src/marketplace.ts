@@ -10,7 +10,7 @@ import type {
 } from './types';
 import * as vat from './vat';
 import * as wht from './wht';
-import { bankersRound } from './utils';
+import { assertNonNegativeFinite, assertRateBetweenZeroAndOne, bankersRound } from './utils';
 
 // ─── Public API ──────────────────────────────────────────────────────────────
 
@@ -37,6 +37,9 @@ export function calculateTransaction(options: MarketplaceOptions & { paymentDate
     platformIsVatAgent = false,
     paymentDate,
   } = options;
+
+  assertNonNegativeFinite('saleAmount', saleAmount);
+  assertRateBetweenZeroAndOne('platformCommission', commissionRate);
 
   // 1. Calculate VAT on the full sale amount
   const vatResult = vat.calculate({ amount: saleAmount, category: serviceCategory });

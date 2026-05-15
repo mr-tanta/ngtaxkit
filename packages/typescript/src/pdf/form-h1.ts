@@ -2,9 +2,9 @@
 // Generates annual Form H1 (PAYE return) PDFs using pdfkit.
 // Returns a Buffer, performs no file I/O. Serverless-compatible.
 
-import PDFDocument from 'pdfkit';
-
 // ─── Types ───────────────────────────────────────────────────────────────────
+
+import { loadPDFDocument } from './load-pdfkit';
 
 export interface FormH1Employer {
   name: string;
@@ -131,7 +131,9 @@ export function generate(options: FormH1Options): FormH1 {
  * Renders: employer details, employee table (S/N, Name, TIN, Gross, Reliefs,
  * Taxable, Tax Deducted), totals, state IRS info, filing deadline.
  */
-export function toPDF(form: FormH1): Promise<Buffer> {
+export async function toPDF(form: FormH1): Promise<Buffer> {
+  const PDFDocument = await loadPDFDocument();
+
   return new Promise((resolve, reject) => {
     const doc = new PDFDocument({
       size: 'A4',

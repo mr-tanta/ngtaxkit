@@ -4,7 +4,7 @@
 
 import type { PensionCalculateOptions, PensionResult } from './types';
 import { InvalidPensionRateError } from './errors';
-import { bankersRound, addWorkingDays } from './utils';
+import { assertNonNegativeFinite, bankersRound, addWorkingDays } from './utils';
 import { get } from './rates';
 
 // ─── Rate Data ───────────────────────────────────────────────────────────────
@@ -39,15 +39,19 @@ export function calculate(
     salaryPaymentDate,
   } = options;
 
+  assertNonNegativeFinite('basicSalary', basicSalary);
+  assertNonNegativeFinite('housingAllowance', housingAllowance);
+  assertNonNegativeFinite('transportAllowance', transportAllowance);
+
   // ── Validate minimum rates ──────────────────────────────────────────────
-  if (employeeRate < MIN_EMPLOYEE_RATE) {
+  if (!Number.isFinite(employeeRate) || employeeRate < MIN_EMPLOYEE_RATE) {
     throw new InvalidPensionRateError(
       `Employee pension rate ${employeeRate} is below the legal minimum of ${MIN_EMPLOYEE_RATE} (${MIN_EMPLOYEE_RATE * 100}%)`,
       'PRA 2014, Section 4(1)',
     );
   }
 
-  if (employerRate < MIN_EMPLOYER_RATE) {
+  if (!Number.isFinite(employerRate) || employerRate < MIN_EMPLOYER_RATE) {
     throw new InvalidPensionRateError(
       `Employer pension rate ${employerRate} is below the legal minimum of ${MIN_EMPLOYER_RATE} (${MIN_EMPLOYER_RATE * 100}%)`,
       'PRA 2014, Section 4(1)',

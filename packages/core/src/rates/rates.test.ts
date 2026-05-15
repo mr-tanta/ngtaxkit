@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { get, getVersion, getEffectiveDate, setCustom, clearCustom, refresh } from './index';
+import { get, getVersion, getEffectiveDate, explain, audit, setCustom, setCustomSources, clearCustom, refresh } from './index';
 import { RateNotFoundError } from '../errors';
 
 describe('Rates Registry', () => {
@@ -18,6 +18,85 @@ describe('Rates Registry', () => {
   describe('getEffectiveDate()', () => {
     it('returns the bundled effective date', () => {
       expect(getEffectiveDate()).toBe('2026-01-01');
+    });
+  });
+
+  // ─── explain() / audit() ─────────────────────────────────────────────────
+
+  describe('explain()', () => {
+    it('returns source metadata for an exact rate key', () => {
+      const source = explain('vat.standard.rate');
+
+      expect(source.key).toBe('vat.standard.rate');
+      expect(source.value).toBe(0.075);
+      expect(source.sourceTitle).toContain('Nigeria Tax Act');
+      expect(source.sourceType).toBe('official_act');
+      expect(source.verificationStatus).toBe('verified');
+      expect(source.confidence).toBe('high');
+    });
+
+    it('falls back to the nearest source-backed prefix', () => {
+      const source = explain('wht.serviceTypes.professional.individual');
+
+      expect(source.key).toBe('wht.serviceTypes.professional.individual');
+      expect(source.value).toBe(0.05);
+      expect(source.sourceTitle).toContain('Deduction of Tax at Source');
+      expect(source.legalBasis).toContain('professional services');
+    });
+
+    it('throws for unknown keys', () => {
+      expect(() => explain('vat.nope.rate')).toThrow(RateNotFoundError);
+    });
+
+    it('marks custom override values as needs-review when no custom source is supplied', () => {
+      setCustom({ 'vat.standard.rate': 0.10 });
+
+      const source = explain('vat.standard.rate');
+
+      expect(source.key).toBe('vat.standard.rate');
+      expect(source.value).toBe(0.10);
+      expect(source.overridden).toBe(true);
+      expect(source.verificationStatus).toBe('needs_review');
+      expect(source.confidence).toBe('low');
+      expect(source.sourceTitle).toBe('Process-local custom override');
+      expect(source.warnings.some((warning) => warning.includes('no custom source metadata'))).toBe(true);
+    });
+
+    it('uses custom source metadata for custom override values', () => {
+      setCustom({ 'vat.standard.rate': 0.10 });
+      setCustomSources({
+        'vat.standard.rate': {
+          sourceTitle: 'Internal tax desk memo',
+          sourceUrl: 'https://example.com/internal-tax-memo',
+          sourceType: 'secondary_reference',
+          legalBasis: 'Internal test-only override approved for sandbox calculations',
+          effectiveDate: '2026-05-16',
+          lastReviewed: '2026-05-16',
+          verificationStatus: 'verified',
+          confidence: 'medium',
+          notes: 'Used by tests to prove custom override source propagation.',
+        },
+      });
+
+      const source = explain('vat.standard.rate');
+
+      expect(source.value).toBe(0.10);
+      expect(source.overridden).toBe(true);
+      expect(source.sourceTitle).toBe('Internal tax desk memo');
+      expect(source.verificationStatus).toBe('verified');
+      expect(source.warnings).toEqual([]);
+    });
+  });
+
+  describe('audit()', () => {
+    it('summarizes local source metadata coverage', () => {
+      const result = audit();
+
+      expect(result.version).toBe(getVersion());
+      expect(result.totalKeys).toBeGreaterThan(0);
+      expect(result.verified).toBeGreaterThan(0);
+      expect(result.missingMetadata).not.toContain('vat.standard.rate');
+      expect(result.sources.some((source) => source.key === 'vat.standard.rate')).toBe(true);
     });
   });
 

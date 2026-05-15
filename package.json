@@ -11,6 +11,7 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
+    "verify:rates": "node scripts/verify-rate-data-sync.mjs",
     "clean": "turbo run clean"
   },
   "devDependencies": {

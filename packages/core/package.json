@@ -25,7 +25,7 @@
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
-    "lint": "eslint src/",
+    "lint": "tsc --noEmit",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist"
   },

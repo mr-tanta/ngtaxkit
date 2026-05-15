@@ -1,0 +1,183 @@
+{
+  "version": "2026.1.0",
+  "effectiveDate": "2026-01-01",
+  "lastReviewed": "2026-05-15",
+  "metadata": {
+    "vat": {
+      "sourceTitle": "Nigeria Tax Act, 2025",
+      "sourceUrl": "https://www.nipc.gov.ng/wp-content/uploads/2025/07/Nigeria-Tax-Act-2025.pdf",
+      "sourceType": "official_act",
+      "legalBasis": "NTA 2025 VAT provisions and First Schedule classifications",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "verified",
+      "confidence": "high",
+      "notes": "Domain-level fallback for VAT values in the bundled registry."
+    },
+    "vat.standard.rate": {
+      "sourceTitle": "Nigeria Tax Act, 2025",
+      "sourceUrl": "https://www.nipc.gov.ng/wp-content/uploads/2025/07/Nigeria-Tax-Act-2025.pdf",
+      "sourceType": "official_act",
+      "legalBasis": "NTA 2025, Section 35(1) - VAT at 7.5% on taxable goods and services",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "verified",
+      "confidence": "high",
+      "notes": "Government-hosted copy used as the bundled source reference."
+    },
+    "vat.zeroRated": {
+      "sourceTitle": "Nigeria Tax Act, 2025",
+      "sourceUrl": "https://www.nipc.gov.ng/wp-content/uploads/2025/07/Nigeria-Tax-Act-2025.pdf",
+      "sourceType": "official_act",
+      "legalBasis": "NTA 2025, First Schedule Part I - zero-rated supplies",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "verified",
+      "confidence": "high",
+      "notes": "Covers zero-rated VAT categories and input VAT recovery flags."
+    },
+    "vat.exempt": {
+      "sourceTitle": "Nigeria Tax Act, 2025",
+      "sourceUrl": "https://www.nipc.gov.ng/wp-content/uploads/2025/07/Nigeria-Tax-Act-2025.pdf",
+      "sourceType": "official_act",
+      "legalBasis": "NTA 2025, First Schedule Part II - exempt supplies",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "verified",
+      "confidence": "high",
+      "notes": "Covers VAT-exempt categories where input VAT is not recoverable."
+    },
+    "paye": {
+      "sourceTitle": "Nigeria Tax Act, 2025",
+      "sourceUrl": "https://www.nipc.gov.ng/wp-content/uploads/2025/07/Nigeria-Tax-Act-2025.pdf",
+      "sourceType": "official_act",
+      "legalBasis": "NTA 2025, Sixth Schedule and personal income tax relief provisions",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "verified",
+      "confidence": "high",
+      "notes": "Covers PAYE exemption threshold, consolidated relief allowance, rent relief, and graduated bands in the bundled PAYE registry."
+    },
+    "wht": {
+      "sourceTitle": "Deduction of Tax at Source (Withholding) Regulations, 2024",
+      "sourceUrl": "https://assets.kpmg.com/content/dam/kpmg/ng/pdf/2024/10/Deduction%20of%20Tax%20at%20Source%20%28Withholding%29%20Regulations%202024_Gazetted.pdf",
+      "sourceType": "professional_copy",
+      "legalBasis": "Deduction of Tax at Source (Withholding) Regulations 2024 - withholding tax rate schedule",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "verified",
+      "confidence": "medium",
+      "notes": "Gazetted copy located through a professional-hosted PDF; prefer an official gazette URL if one becomes available."
+    },
+    "wht.serviceTypes": {
+      "sourceTitle": "Deduction of Tax at Source (Withholding) Regulations, 2024",
+      "sourceUrl": "https://assets.kpmg.com/content/dam/kpmg/ng/pdf/2024/10/Deduction%20of%20Tax%20at%20Source%20%28Withholding%29%20Regulations%202024_Gazetted.pdf",
+      "sourceType": "professional_copy",
+      "legalBasis": "Deduction of Tax at Source (Withholding) Regulations 2024, Schedule - withholding rates by transaction type",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "verified",
+      "confidence": "medium",
+      "notes": "Covers individual and company WHT rates by service type."
+    },
+    "wht.serviceTypes.professional": {
+      "sourceTitle": "Deduction of Tax at Source (Withholding) Regulations, 2024",
+      "sourceUrl": "https://assets.kpmg.com/content/dam/kpmg/ng/pdf/2024/10/Deduction%20of%20Tax%20at%20Source%20%28Withholding%29%20Regulations%202024_Gazetted.pdf",
+      "sourceType": "professional_copy",
+      "legalBasis": "Deduction of Tax at Source (Withholding) Regulations 2024, Schedule - professional services",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "verified",
+      "confidence": "medium",
+      "notes": "Covers individual and company professional-service WHT rates."
+    },
+    "wht.smallCompanyExemption": {
+      "sourceTitle": "Nigeria Tax Act, 2025",
+      "sourceUrl": "https://www.nipc.gov.ng/wp-content/uploads/2025/07/Nigeria-Tax-Act-2025.pdf",
+      "sourceType": "official_act",
+      "legalBasis": "NTA 2025, Section 68 - small company WHT exemption for gross amounts at or below Naira 2,000,000",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "needs_review",
+      "confidence": "medium",
+      "notes": "Kept separate because users often need to disclose this threshold in WHT decisions."
+    },
+    "wht.remittanceDeadline": {
+      "sourceTitle": "Deduction of Tax at Source (Withholding) Regulations, 2024",
+      "sourceUrl": "https://assets.kpmg.com/content/dam/kpmg/ng/pdf/2024/10/Deduction%20of%20Tax%20at%20Source%20%28Withholding%29%20Regulations%202024_Gazetted.pdf",
+      "sourceType": "professional_copy",
+      "legalBasis": "Deduction of Tax at Source (Withholding) Regulations 2024 - remittance timing rules",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "verified",
+      "confidence": "medium",
+      "notes": "Covers the bundled 21st-day remittance deadline."
+    },
+    "pension": {
+      "sourceTitle": "Pension Reform Act 2014",
+      "sourceUrl": "https://www.pencom.gov.ng/pra2014/",
+      "sourceType": "regulator",
+      "legalBasis": "Pension Reform Act 2014, sections 4 and 11 - contribution basis and remittance timing",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "verified",
+      "confidence": "high",
+      "notes": "Regulator-hosted Act page used for pension contribution rules."
+    },
+    "statutory": {
+      "sourceTitle": "Nigeria statutory payroll contributions",
+      "sourceUrl": "https://www.firs.gov.ng/",
+      "sourceType": "government_portal",
+      "legalBasis": "Bundled statutory payroll contribution references for NHF, NSITF, and ITF",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "needs_review",
+      "confidence": "medium",
+      "notes": "Domain-level fallback for statutory contribution values while per-agency source links are maintained below."
+    },
+    "statutory.nhf": {
+      "sourceTitle": "National Housing Fund Act",
+      "sourceUrl": "https://www.fmbn.gov.ng/",
+      "sourceType": "government_portal",
+      "legalBasis": "National Housing Fund Act, Section 4 - employee contribution of 2.5% of basic salary",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "needs_review",
+      "confidence": "medium",
+      "notes": "Government portal recorded; source should be upgraded to an official consolidated Act URL when available."
+    },
+    "statutory.nsitf": {
+      "sourceTitle": "Employee Compensation Act 2010",
+      "sourceUrl": "https://www.nsitf.gov.ng/",
+      "sourceType": "government_portal",
+      "legalBasis": "Employee Compensation Act 2010, Section 56 - employer contribution of 1% of monthly payroll",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "needs_review",
+      "confidence": "medium",
+      "notes": "Government portal recorded; source should be upgraded to an official Act PDF when available."
+    },
+    "statutory.itf": {
+      "sourceTitle": "Industrial Training Fund Act",
+      "sourceUrl": "https://itf.gov.ng/",
+      "sourceType": "government_portal",
+      "legalBasis": "Industrial Training Fund Act, Section 6 - 1% annual payroll contribution for qualifying employers",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "needs_review",
+      "confidence": "medium",
+      "notes": "Government portal recorded; source should be upgraded to an official Act PDF when available."
+    },
+    "state_filing": {
+      "sourceTitle": "State internal revenue service filing references",
+      "sourceUrl": "https://www.firs.gov.ng/",
+      "sourceType": "government_portal",
+      "legalBasis": "NTA 2025 PAYE administration references and state IRS public filing channels",
+      "effectiveDate": "2026-01-01",
+      "lastReviewed": "2026-05-15",
+      "verificationStatus": "needs_review",
+      "confidence": "low",
+      "notes": "State portal/email/address data changes often and should be rechecked before operational use."
+    }
+  }
+}

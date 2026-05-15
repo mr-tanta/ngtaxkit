@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
-from .errors import InvalidAmountError, InvalidCategoryError
-from .rates import get
-from .types import TaxCategory, VatResult
-from .utils import bankers_round
+from typing import cast
+
+from .errors import InvalidCategoryError
+from .explain import collect_rate_sources
+from .rates import get_float, get_str
+from .types import CalculationExplanation, RateType, TaxCategory, VatResult
+from .utils import assert_non_negative_finite, bankers_round
 
 # ─── Internal Helpers ─────────────────────────────────────────────────────────
 
@@ -35,7 +38,7 @@ ALL_CATEGORIES: list[str] = [
 ]
 
 
-def _classify_category(category: str) -> str:
+def _classify_category(category: str) -> RateType:
     """Determine the rate type for a given category."""
     if category in ZERO_RATED_CATEGORIES:
         return "zero-rated"
@@ -47,15 +50,22 @@ def _classify_category(category: str) -> str:
 def _get_legal_basis(category: str) -> str:
     """Resolve the legal basis string for a category from the rate data."""
     if category == "standard":
-        return get("vat.standard.legalBasis")  # type: ignore[return-value]
+        return get_str("vat.standard.legalBasis")
     if category in ZERO_RATED_CATEGORIES:
-        return get(f"vat.zeroRated.{category}.legalBasis")  # type: ignore[return-value]
-    return get(f"vat.exempt.{category}.legalBasis")  # type: ignore[return-value]
+        return get_str(f"vat.zeroRated.{category}.legalBasis")
+    return get_str(f"vat.exempt.{category}.legalBasis")
+
+
+def _get_rate_key(category: str) -> str:
+    if category == "standard":
+        return "vat.standard.rate"
+    if category in ZERO_RATED_CATEGORIES:
+        return f"vat.zeroRated.{category}.rate"
+    return f"vat.exempt.{category}.rate"
 
 
 def _validate_inputs(amount: float, category: str) -> None:
-    if amount < 0:
-        raise InvalidAmountError(f"Amount must be non-negative, received {amount}")
+    assert_non_negative_finite("amount", amount)
     if category not in ALL_CATEGORIES:
         raise InvalidCategoryError(
             f'Unknown VAT category "{category}"',
@@ -74,7 +84,7 @@ def _resolve_rate(category: str, date: str | None = None) -> float:
         if year < 2026:
             return 0.075
 
-    return get("vat.standard.rate")  # type: ignore[return-value]
+    return get_float("vat.standard.rate")
 
 
 # ─── Public API ───────────────────────────────────────────────────────────────
@@ -92,6 +102,7 @@ def calculate(
     - Inclusive: gross = amount, net = gross / (1 + rate), vat = gross − net
     """
     _validate_inputs(amount, category)
+    typed_category = cast(TaxCategory, category)
 
     rate_type = _classify_category(category)
     rate = _resolve_rate(category, date)
@@ -116,10 +127,72 @@ def calculate(
         vat=vat,
         gross=gross,
         rate=rate,
-        rate_type=rate_type,  # type: ignore[arg-type]
-        category=category,  # type: ignore[arg-type]
+        rate_type=rate_type,
+        category=typed_category,
         legal_basis=legal_basis,
         input_vat_recoverable=input_vat_recoverable,
+    )
+
+
+def explain_calculate(
+    amount: float,
+    inclusive: bool = False,
+    category: str = "standard",
+    date: str | None = None,
+) -> CalculationExplanation:
+    """Calculate VAT and return the source-backed reasoning used for the result."""
+    result = calculate(amount=amount, inclusive=inclusive, category=category, date=date)
+    rate_keys = [_get_rate_key(category)]
+    sources, warnings = collect_rate_sources(rate_keys)
+
+    if result["rate_type"] == "standard":
+        formula = (
+            [
+                "Gross amount is VAT-inclusive.",
+                "Net amount = gross amount / (1 + rate).",
+                "VAT = gross amount - net amount.",
+            ]
+            if inclusive
+            else [
+                "Net amount is VAT-exclusive.",
+                "VAT = net amount * rate.",
+                "Gross amount = net amount + VAT.",
+            ]
+        )
+    else:
+        formula = [
+            f'VAT = 0 because category "{category}" is {result["rate_type"]}.',
+            "Gross amount equals net amount.",
+        ]
+
+    assumptions = [
+        "Amounts are denominated in Nigerian naira.",
+        "Monetary values use banker's rounding to 2 decimal places.",
+    ]
+    if result["rate_type"] == "zero-rated":
+        assumptions.append(
+            "The category is zero-rated, so output VAT is 0 and input VAT recoverable remains true."
+        )
+    if result["rate_type"] == "exempt":
+        assumptions.append(
+            "The category is exempt, so output VAT is 0 and input VAT recoverable is false."
+        )
+    if date:
+        assumptions.append(f"The requested date {date} is used for rate-regime selection.")
+
+    return CalculationExplanation(
+        inputs={
+            "amount": amount,
+            "inclusive": inclusive,
+            "category": category,
+            "date": date,
+        },
+        result=result,
+        formula=formula,
+        assumptions=assumptions,
+        rate_keys=rate_keys,
+        sources=sources,
+        warnings=warnings,
     )
 
 

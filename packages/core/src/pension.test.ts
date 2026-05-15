@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as pension from './pension';
-import { InvalidPensionRateError } from './errors';
+import { InvalidAmountError, InvalidPensionRateError } from './errors';
 import testCases from '../../../shared/fixtures/pension_test_cases.json';
 
 // ─── Types for fixture data ─────────────────────────────────────────────────
@@ -73,6 +73,23 @@ describe('Pension Module — shared fixtures', () => {
 // ─── 8.2: Minimum rate validation ───────────────────────────────────────────
 
 describe('Pension Module — minimum rate validation', () => {
+  it('throws InvalidAmountError for negative salary component', () => {
+    expect(() =>
+      pension.calculate({
+        basicSalary: 300_000,
+        housingAllowance: -1,
+      }),
+    ).toThrow(InvalidAmountError);
+  });
+
+  it('throws InvalidAmountError for NaN salary component', () => {
+    expect(() =>
+      pension.calculate({
+        basicSalary: Number.NaN,
+      }),
+    ).toThrow(InvalidAmountError);
+  });
+
   it('throws InvalidPensionRateError for employee rate below 8%', () => {
     expect(() =>
       pension.calculate({

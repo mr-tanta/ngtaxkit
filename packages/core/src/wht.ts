@@ -2,10 +2,11 @@
 // Pure-function Withholding Tax calculation engine per WHT Regulations 2024.
 // Zero dependencies, deterministic output, banker's rounding on all monetary values.
 
-import type { WhtServiceType, WhtCalculateOptions, WhtResult } from './types';
-import { InvalidServiceTypeError } from './errors';
-import { bankersRound } from './utils';
+import type { CalculationExplanation, WhtServiceType, WhtCalculateOptions, WhtResult } from './types';
+import { InvalidServiceTypeError, ValidationError } from './errors';
+import { assertNonNegativeFinite, bankersRound } from './utils';
 import { get } from './rates';
+import { collectRateSources, uniqueRateKeys } from './explain';
 
 // ─── Internal Helpers ────────────────────────────────────────────────────────
 
@@ -37,6 +38,15 @@ function validateServiceType(serviceType: string): asserts serviceType is WhtSer
     throw new InvalidServiceTypeError(
       `Unknown WHT service type "${serviceType}"`,
       ALL_SERVICE_TYPES,
+    );
+  }
+}
+
+function validatePayeeType(payeeType: string): asserts payeeType is 'individual' | 'company' {
+  if (payeeType !== 'individual' && payeeType !== 'company') {
+    throw new ValidationError(
+      `Unknown WHT payee type "${payeeType}"`,
+      [{ field: 'payeeType', message: 'Must be "individual" or "company"' }],
     );
   }
 }
@@ -81,6 +91,8 @@ export function calculate(
     paymentDate,
   } = options;
 
+  assertNonNegativeFinite('amount', amount);
+  validatePayeeType(payeeType);
   validateServiceType(serviceType);
 
   const rate = getRate(serviceType, payeeType);
@@ -122,12 +134,79 @@ export function calculate(
 }
 
 /**
+ * Calculate WHT and return the source-backed reasoning used for the result.
+ */
+export function explainCalculate(
+  options: WhtCalculateOptions & { paymentDate?: string },
+): CalculationExplanation<WhtResult> {
+  const {
+    amount,
+    payeeType,
+    serviceType,
+    payeeIsSmallCompany = false,
+    payeeTin,
+    paymentDate,
+  } = options;
+  const effectivePaymentDate = paymentDate ?? new Date().toISOString().slice(0, 10);
+  const normalizedOptions = {
+    amount,
+    payeeType,
+    serviceType,
+    payeeIsSmallCompany,
+    payeeTin,
+    paymentDate: effectivePaymentDate,
+  };
+  const result = calculate(normalizedOptions);
+  const rateKeys = uniqueRateKeys([
+    `wht.serviceTypes.${serviceType}.${payeeType}`,
+    'wht.remittanceDeadline.dayOfMonth',
+    ...(payeeIsSmallCompany ? ['wht.smallCompanyExemption.threshold'] : []),
+  ]);
+  const { sources, warnings } = collectRateSources(rateKeys);
+
+  const formula = result.exempt
+    ? [
+        `Gross amount = ${amount}.`,
+        'Small company exemption applies because the payee is marked as a small company and the gross amount is at or below the exemption threshold.',
+        'WHT amount = 0.',
+        'Net payment = gross amount.',
+      ]
+    : [
+        `Gross amount = ${amount}.`,
+        'WHT amount = gross amount * withholding rate.',
+        'Net payment = gross amount - WHT amount.',
+        'Remittance deadline = configured day of the month following the payment date.',
+      ];
+
+  const assumptions = [
+    'Amounts are denominated in Nigerian naira.',
+    "Monetary values use banker's rounding to 2 decimal places.",
+    `Payment date ${effectivePaymentDate} is used for the remittance deadline.`,
+  ];
+
+  if (!payeeTin) {
+    assumptions.push('No payee TIN was supplied; the bundled WHT calculator currently does not alter rates by TIN availability.');
+  }
+
+  return {
+    inputs: normalizedOptions,
+    result,
+    formula,
+    assumptions,
+    rateKeys,
+    sources,
+    warnings,
+  };
+}
+
+/**
  * Get the WHT rate for a service type and payee type.
  */
 export function getRate(
   serviceType: WhtServiceType,
   payeeType: 'individual' | 'company',
 ): number {
+  validatePayeeType(payeeType);
   validateServiceType(serviceType);
   return get(`wht.serviceTypes.${serviceType}.${payeeType}`) as number;
 }

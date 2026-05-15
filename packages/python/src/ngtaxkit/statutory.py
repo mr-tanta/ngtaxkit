@@ -2,24 +2,26 @@
 
 from __future__ import annotations
 
-from .rates import get
+from typing import Literal
+
+from .rates import get_float, get_int, get_str
 from .types import AllStatutoryResult, ItfResult, NhfResult, NsitfResult
-from .utils import bankers_round
+from .utils import assert_non_negative_finite, bankers_round
 
 # ─── Rate Data ────────────────────────────────────────────────────────────────
 
-NHF_RATE: float = get("statutory.nhf.rate")  # type: ignore[assignment]
-NHF_LEGAL_BASIS: str = get("statutory.nhf.legalBasis")  # type: ignore[assignment]
+NHF_RATE = get_float("statutory.nhf.rate")
+NHF_LEGAL_BASIS = get_str("statutory.nhf.legalBasis")
 
-NSITF_RATE: float = get("statutory.nsitf.rate")  # type: ignore[assignment]
-NSITF_LEGAL_BASIS: str = get("statutory.nsitf.legalBasis")  # type: ignore[assignment]
-NSITF_CONTRIBUTOR_TYPE: str = get("statutory.nsitf.contributorType")  # type: ignore[assignment]
+NSITF_RATE = get_float("statutory.nsitf.rate")
+NSITF_LEGAL_BASIS = get_str("statutory.nsitf.legalBasis")
+NSITF_CONTRIBUTOR_TYPE = get_str("statutory.nsitf.contributorType")
 
-ITF_RATE: float = get("statutory.itf.rate")  # type: ignore[assignment]
-ITF_LEGAL_BASIS: str = get("statutory.itf.legalBasis")  # type: ignore[assignment]
-ITF_MIN_EMPLOYEES: int = get("statutory.itf.thresholds.minimumEmployees")  # type: ignore[assignment]
-ITF_MIN_TURNOVER: float = get("statutory.itf.thresholds.minimumAnnualTurnover")  # type: ignore[assignment]
-ITF_REFUND_MAX_RATE: float = get("statutory.itf.refund.maxRate")  # type: ignore[assignment]
+ITF_RATE = get_float("statutory.itf.rate")
+ITF_LEGAL_BASIS = get_str("statutory.itf.legalBasis")
+ITF_MIN_EMPLOYEES = get_int("statutory.itf.thresholds.minimumEmployees")
+ITF_MIN_TURNOVER = get_float("statutory.itf.thresholds.minimumAnnualTurnover")
+ITF_REFUND_MAX_RATE = get_float("statutory.itf.refund.maxRate")
 
 # ─── Public API ───────────────────────────────────────────────────────────────
 
@@ -29,6 +31,7 @@ def nhf(basic_salary: float) -> NhfResult:
 
     NHF = 2.5% of basic salary (employee contribution).
     """
+    assert_non_negative_finite("basic_salary", basic_salary)
     return NhfResult(
         nhf_amount=bankers_round(basic_salary * NHF_RATE),
         rate=NHF_RATE,
@@ -42,6 +45,7 @@ def nsitf(monthly_payroll: float) -> NsitfResult:
 
     NSITF = 1% of monthly payroll (employer-only contribution).
     """
+    assert_non_negative_finite("monthly_payroll", monthly_payroll)
     return NsitfResult(
         nsitf_amount=bankers_round(monthly_payroll * NSITF_RATE),
         rate=NSITF_RATE,
@@ -62,6 +66,11 @@ def itf(
     ITF = 1% of annual payroll for organisations with 5+ employees OR ₦50M+ annual turnover.
     Refund = min(itf_amount × 50%, training_spend).
     """
+    assert_non_negative_finite("annual_payroll", annual_payroll)
+    assert_non_negative_finite("employee_count", employee_count)
+    assert_non_negative_finite("annual_turnover", annual_turnover)
+    assert_non_negative_finite("training_spend", training_spend)
+
     eligible_by_employees = employee_count >= ITF_MIN_EMPLOYEES
     eligible_by_turnover = annual_turnover >= ITF_MIN_TURNOVER
     eligible = eligible_by_employees or eligible_by_turnover
@@ -76,7 +85,9 @@ def itf(
             legal_basis=ITF_LEGAL_BASIS,
         )
 
-    eligibility_basis = "employeeCount" if eligible_by_employees else "annualTurnover"
+    eligibility_basis: Literal["employeeCount", "annualTurnover"] = (
+        "employeeCount" if eligible_by_employees else "annualTurnover"
+    )
     itf_amount = bankers_round(annual_payroll * ITF_RATE)
     max_refund = bankers_round(itf_amount * ITF_REFUND_MAX_RATE)
     refund_amount = min(max_refund, training_spend)

@@ -3,7 +3,27 @@
 from __future__ import annotations
 
 import datetime
+import math
 from decimal import ROUND_HALF_EVEN, Decimal
+
+from .errors import InvalidAmountError, ValidationError
+
+
+def assert_non_negative_finite(field: str, value: float) -> None:
+    """Validate a monetary amount or count that must be finite and non-negative."""
+    if not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0:
+        raise InvalidAmountError(
+            f"{field} must be a finite non-negative number, received {value}"
+        )
+
+
+def assert_rate_between_zero_and_one(field: str, value: float) -> None:
+    """Validate a fractional rate such as 0.10 for 10%."""
+    if not isinstance(value, (int, float)) or not math.isfinite(value) or value < 0 or value > 1:
+        raise ValidationError(
+            f"{field} must be a finite number between 0 and 1, received {value}",
+            [{"field": field, "message": "Must be a finite number between 0 and 1"}],
+        )
 
 
 def bankers_round(value: float) -> float:

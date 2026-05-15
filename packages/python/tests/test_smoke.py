@@ -97,6 +97,10 @@ class TestVat:
         with pytest.raises(errors.InvalidAmountError):
             vat.calculate(amount=-100.0)
 
+    def test_nan_amount_raises(self):
+        with pytest.raises(errors.InvalidAmountError):
+            vat.calculate(amount=float("nan"))
+
     def test_invalid_category_raises(self):
         with pytest.raises(errors.InvalidCategoryError):
             vat.calculate(amount=100.0, category="invalid")
@@ -137,6 +141,10 @@ class TestPaye:
     def test_negative_raises(self):
         with pytest.raises(errors.InvalidAmountError):
             paye.calculate(gross_annual=-1.0)
+
+    def test_negative_rent_paid_raises(self):
+        with pytest.raises(errors.InvalidAmountError):
+            paye.calculate(gross_annual=3000000.0, rent_paid_annual=-1.0)
 
     def test_is_exempt(self):
         assert paye.is_exempt(800000.0) is True
@@ -181,6 +189,22 @@ class TestWht:
         with pytest.raises(errors.InvalidServiceTypeError):
             wht.calculate(amount=1000.0, payee_type="individual", service_type="invalid")
 
+    def test_negative_amount_raises(self):
+        with pytest.raises(errors.InvalidAmountError):
+            wht.calculate(
+                amount=-1.0,
+                payee_type="individual",
+                service_type="professional",
+            )
+
+    def test_invalid_payee_type_raises(self):
+        with pytest.raises(errors.ValidationError):
+            wht.calculate(
+                amount=1000.0,
+                payee_type="partnership",
+                service_type="professional",
+            )
+
     def test_list_service_types(self):
         types = wht.list_service_types()
         assert "professional" in types
@@ -218,6 +242,10 @@ class TestPension:
         with pytest.raises(errors.InvalidPensionRateError):
             pension.calculate(basic_salary=200000.0, employee_rate=0.05)
 
+    def test_negative_salary_component_raises(self):
+        with pytest.raises(errors.InvalidAmountError):
+            pension.calculate(basic_salary=200000.0, housing_allowance=-1.0)
+
     def test_invalid_employer_rate(self):
         with pytest.raises(errors.InvalidPensionRateError):
             pension.calculate(basic_salary=200000.0, employer_rate=0.05)
@@ -239,10 +267,18 @@ class TestStatutory:
         assert result["nhf_amount"] == bankers_round(200000.0 * 0.025)
         assert result["rate"] == 0.025
 
+    def test_negative_nhf_salary_raises(self):
+        with pytest.raises(errors.InvalidAmountError):
+            statutory.nhf(basic_salary=-1.0)
+
     def test_nsitf(self):
         result = statutory.nsitf(monthly_payroll=1000000.0)
         assert result["nsitf_amount"] == bankers_round(1000000.0 * 0.01)
         assert result["contributor_type"] == "employer"
+
+    def test_negative_nsitf_payroll_raises(self):
+        with pytest.raises(errors.InvalidAmountError):
+            statutory.nsitf(monthly_payroll=-1.0)
 
     def test_itf_eligible(self):
         result = statutory.itf(
@@ -251,6 +287,10 @@ class TestStatutory:
         )
         assert result["eligible"] is True
         assert result["itf_amount"] == bankers_round(12000000.0 * 0.01)
+
+    def test_negative_itf_employee_count_raises(self):
+        with pytest.raises(errors.InvalidAmountError):
+            statutory.itf(annual_payroll=12000000.0, employee_count=-1)
 
     def test_itf_not_eligible(self):
         result = statutory.itf(
@@ -300,6 +340,14 @@ class TestMarketplace:
         )
         assert result["wht"] is not None
         assert result["wht"]["wht_amount"] > 0
+
+    def test_invalid_commission_rate_raises(self):
+        with pytest.raises(errors.ValidationError):
+            marketplace.calculate_transaction(
+                sale_amount=100000.0,
+                platform_commission=1.01,
+                seller_vat_registered=True,
+            )
 
 
 class TestPayroll:

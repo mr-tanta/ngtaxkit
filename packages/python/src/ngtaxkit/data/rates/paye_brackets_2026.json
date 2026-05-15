@@ -1,0 +1,62 @@
+{
+  "version": "2026.1.0",
+  "effectiveDate": "2026-01-01",
+  "legalBasis": "NTA 2025, Sixth Schedule — Graduated personal income tax rates",
+  "exemptionThreshold": 800000,
+  "exemptionBasis": "NTA 2025, Section 33(2) — Annual income at or below ₦800,000 exempt from PAYE",
+  "cra": {
+    "fixedAmount": 200000,
+    "percentOfGross": 0.01,
+    "additionalPercentOfGross": 0.20,
+    "legalBasis": "NTA 2025, Section 33(1) — Consolidated Relief Allowance: higher of ₦200,000 or 1% of gross income, plus 20% of gross income"
+  },
+  "rentRelief": {
+    "rate": 0.20,
+    "cap": 500000,
+    "legalBasis": "NTA 2025, Section 33(3) — Rent relief at 20% of rent paid, capped at ₦500,000"
+  },
+  "bands": [
+    {
+      "lower": 0,
+      "upper": 800000,
+      "rate": 0.00,
+      "description": "First ₦800,000"
+    },
+    {
+      "lower": 800000,
+      "upper": 1100000,
+      "rate": 0.07,
+      "description": "Next ₦300,000"
+    },
+    {
+      "lower": 1100000,
+      "upper": 1400000,
+      "rate": 0.11,
+      "description": "Next ₦300,000"
+    },
+    {
+      "lower": 1400000,
+      "upper": 1900000,
+      "rate": 0.15,
+      "description": "Next ₦500,000"
+    },
+    {
+      "lower": 1900000,
+      "upper": 2400000,
+      "rate": 0.19,
+      "description": "Next ₦500,000"
+    },
+    {
+      "lower": 2400000,
+      "upper": 4000000,
+      "rate": 0.21,
+      "description": "Next ₦1,600,000"
+    },
+    {
+      "lower": 4000000,
+      "upper": null,
+      "rate": 0.24,
+      "description": "Above ₦4,000,000"
+    }
+  ]
+}

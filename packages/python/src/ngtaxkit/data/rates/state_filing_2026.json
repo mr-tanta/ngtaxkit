@@ -1,0 +1,312 @@
+{
+  "version": "2026.1.0",
+  "effectiveDate": "2026-01-01",
+  "legalBasis": "NTA 2025 — PAYE administration by state Internal Revenue Services",
+  "payeRemittanceDeadline": {
+    "dayOfMonth": 10,
+    "description": "10th of the month following the payroll month"
+  },
+  "formH1Deadline": {
+    "month": 1,
+    "day": 31,
+    "description": "January 31 of the following year"
+  },
+  "jurisdictions": {
+    "AB": {
+      "name": "Abia",
+      "irsName": "Abia State Internal Revenue Service (ABIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@abirs.gov.ng",
+      "address": "ABIRS Office, Umuahia, Abia State"
+    },
+    "AD": {
+      "name": "Adamawa",
+      "irsName": "Adamawa State Internal Revenue Service (ADIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@adirs.gov.ng",
+      "address": "ADIRS Office, Yola, Adamawa State"
+    },
+    "AK": {
+      "name": "Akwa Ibom",
+      "irsName": "Akwa Ibom State Internal Revenue Service (AKIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@akirs.gov.ng",
+      "address": "AKIRS Office, Uyo, Akwa Ibom State"
+    },
+    "AN": {
+      "name": "Anambra",
+      "irsName": "Anambra State Internal Revenue Service (ANIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@anirs.gov.ng",
+      "address": "ANIRS Office, Awka, Anambra State"
+    },
+    "BA": {
+      "name": "Bauchi",
+      "irsName": "Bauchi State Board of Internal Revenue (BSBIR)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@bsbir.gov.ng",
+      "address": "BSBIR Office, Bauchi, Bauchi State"
+    },
+    "BY": {
+      "name": "Bayelsa",
+      "irsName": "Bayelsa State Internal Revenue Service (BYIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@byirs.gov.ng",
+      "address": "BYIRS Office, Yenagoa, Bayelsa State"
+    },
+    "BE": {
+      "name": "Benue",
+      "irsName": "Benue State Internal Revenue Service (BEIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@beirs.gov.ng",
+      "address": "BEIRS Office, Makurdi, Benue State"
+    },
+    "BO": {
+      "name": "Borno",
+      "irsName": "Borno State Board of Internal Revenue (BOBIR)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@bobir.gov.ng",
+      "address": "BOBIR Office, Maiduguri, Borno State"
+    },
+    "CR": {
+      "name": "Cross River",
+      "irsName": "Cross River State Internal Revenue Service (CRIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@crirs.gov.ng",
+      "address": "CRIRS Office, Calabar, Cross River State"
+    },
+    "DE": {
+      "name": "Delta",
+      "irsName": "Delta State Internal Revenue Service (DIRS)",
+      "filingMethods": ["e-filing", "physical"],
+      "portalUrl": "https://dirs.dl.gov.ng",
+      "email": "info@dirs.dl.gov.ng",
+      "address": "DIRS Office, Asaba, Delta State"
+    },
+    "EB": {
+      "name": "Ebonyi",
+      "irsName": "Ebonyi State Internal Revenue Service (EBIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@ebirs.gov.ng",
+      "address": "EBIRS Office, Abakaliki, Ebonyi State"
+    },
+    "ED": {
+      "name": "Edo",
+      "irsName": "Edo State Internal Revenue Service (EIRS)",
+      "filingMethods": ["e-filing", "physical"],
+      "portalUrl": "https://eirs.gov.ng",
+      "email": "info@eirs.gov.ng",
+      "address": "EIRS Office, Benin City, Edo State"
+    },
+    "EK": {
+      "name": "Ekiti",
+      "irsName": "Ekiti State Internal Revenue Service (EKIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@ekirs.gov.ng",
+      "address": "EKIRS Office, Ado-Ekiti, Ekiti State"
+    },
+    "EN": {
+      "name": "Enugu",
+      "irsName": "Enugu State Internal Revenue Service (ENIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@enirs.gov.ng",
+      "address": "ENIRS Office, Enugu, Enugu State"
+    },
+    "FC": {
+      "name": "Federal Capital Territory",
+      "irsName": "FCT Internal Revenue Service (FCT-IRS)",
+      "filingMethods": ["e-filing", "email", "physical"],
+      "portalUrl": "https://fctirs.gov.ng",
+      "email": "info@fctirs.gov.ng",
+      "address": "FCT-IRS Office, Area 10, Garki, Abuja"
+    },
+    "GO": {
+      "name": "Gombe",
+      "irsName": "Gombe State Internal Revenue Service (GOIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@goirs.gov.ng",
+      "address": "GOIRS Office, Gombe, Gombe State"
+    },
+    "IM": {
+      "name": "Imo",
+      "irsName": "Imo State Internal Revenue Service (IMIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@imirs.gov.ng",
+      "address": "IMIRS Office, Owerri, Imo State"
+    },
+    "JI": {
+      "name": "Jigawa",
+      "irsName": "Jigawa State Board of Internal Revenue (JIBIR)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@jibir.gov.ng",
+      "address": "JIBIR Office, Dutse, Jigawa State"
+    },
+    "KD": {
+      "name": "Kaduna",
+      "irsName": "Kaduna State Internal Revenue Service (KDIRS)",
+      "filingMethods": ["e-filing", "physical"],
+      "portalUrl": "https://kdirs.gov.ng",
+      "email": "info@kdirs.gov.ng",
+      "address": "KDIRS Office, Kaduna, Kaduna State"
+    },
+    "KN": {
+      "name": "Kano",
+      "irsName": "Kano State Internal Revenue Service (KNIRS)",
+      "filingMethods": ["e-filing", "physical"],
+      "portalUrl": "https://knirs.gov.ng",
+      "email": "info@knirs.gov.ng",
+      "address": "KNIRS Office, Kano, Kano State"
+    },
+    "KT": {
+      "name": "Katsina",
+      "irsName": "Katsina State Internal Revenue Service (KTIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@ktirs.gov.ng",
+      "address": "KTIRS Office, Katsina, Katsina State"
+    },
+    "KE": {
+      "name": "Kebbi",
+      "irsName": "Kebbi State Internal Revenue Service (KEIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@keirs.gov.ng",
+      "address": "KEIRS Office, Birnin Kebbi, Kebbi State"
+    },
+    "KO": {
+      "name": "Kogi",
+      "irsName": "Kogi State Internal Revenue Service (KOIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@koirs.gov.ng",
+      "address": "KOIRS Office, Lokoja, Kogi State"
+    },
+    "KW": {
+      "name": "Kwara",
+      "irsName": "Kwara State Internal Revenue Service (KWIRS)",
+      "filingMethods": ["e-filing", "physical"],
+      "portalUrl": "https://kwirs.gov.ng",
+      "email": "info@kwirs.gov.ng",
+      "address": "KWIRS Office, Ilorin, Kwara State"
+    },
+    "LA": {
+      "name": "Lagos",
+      "irsName": "Lagos State Internal Revenue Service (LIRS)",
+      "filingMethods": ["e-filing", "email", "physical"],
+      "portalUrl": "https://lirs.gov.ng",
+      "email": "info@lirs.gov.ng",
+      "address": "LIRS Office, Alausa, Ikeja, Lagos State"
+    },
+    "NA": {
+      "name": "Nasarawa",
+      "irsName": "Nasarawa State Internal Revenue Service (NAIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@nairs.gov.ng",
+      "address": "NAIRS Office, Lafia, Nasarawa State"
+    },
+    "NI": {
+      "name": "Niger",
+      "irsName": "Niger State Internal Revenue Service (NIIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@niirs.gov.ng",
+      "address": "NIIRS Office, Minna, Niger State"
+    },
+    "OG": {
+      "name": "Ogun",
+      "irsName": "Ogun State Internal Revenue Service (OGIRS)",
+      "filingMethods": ["e-filing", "physical"],
+      "portalUrl": "https://ogirs.gov.ng",
+      "email": "info@ogirs.gov.ng",
+      "address": "OGIRS Office, Abeokuta, Ogun State"
+    },
+    "ON": {
+      "name": "Ondo",
+      "irsName": "Ondo State Internal Revenue Service (ODIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@odirs.gov.ng",
+      "address": "ODIRS Office, Akure, Ondo State"
+    },
+    "OS": {
+      "name": "Osun",
+      "irsName": "Osun State Internal Revenue Service (OSIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@osirs.gov.ng",
+      "address": "OSIRS Office, Osogbo, Osun State"
+    },
+    "OY": {
+      "name": "Oyo",
+      "irsName": "Oyo State Internal Revenue Service (OYIRS)",
+      "filingMethods": ["e-filing", "physical"],
+      "portalUrl": "https://oyirs.gov.ng",
+      "email": "info@oyirs.gov.ng",
+      "address": "OYIRS Office, Ibadan, Oyo State"
+    },
+    "PL": {
+      "name": "Plateau",
+      "irsName": "Plateau State Internal Revenue Service (PLIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@plirs.gov.ng",
+      "address": "PLIRS Office, Jos, Plateau State"
+    },
+    "RI": {
+      "name": "Rivers",
+      "irsName": "Rivers State Internal Revenue Service (RIRS)",
+      "filingMethods": ["e-filing", "physical"],
+      "portalUrl": "https://rirs.gov.ng",
+      "email": "info@rirs.gov.ng",
+      "address": "RIRS Office, Port Harcourt, Rivers State"
+    },
+    "SO": {
+      "name": "Sokoto",
+      "irsName": "Sokoto State Board of Internal Revenue (SOBIR)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@sobir.gov.ng",
+      "address": "SOBIR Office, Sokoto, Sokoto State"
+    },
+    "TA": {
+      "name": "Taraba",
+      "irsName": "Taraba State Internal Revenue Service (TAIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@tairs.gov.ng",
+      "address": "TAIRS Office, Jalingo, Taraba State"
+    },
+    "YO": {
+      "name": "Yobe",
+      "irsName": "Yobe State Board of Internal Revenue (YOBIR)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@yobir.gov.ng",
+      "address": "YOBIR Office, Damaturu, Yobe State"
+    },
+    "ZA": {
+      "name": "Zamfara",
+      "irsName": "Zamfara State Internal Revenue Service (ZAIRS)",
+      "filingMethods": ["physical"],
+      "portalUrl": null,
+      "email": "info@zairs.gov.ng",
+      "address": "ZAIRS Office, Gusau, Zamfara State"
+    }
+  }
+}

@@ -459,6 +459,21 @@ describe('CSV — toCSV()', () => {
     expect(csv).toBe('Invoice Number,Date,Buyer,Seller,Subtotal,VAT,Total,Status');
   });
 
+  it('accepts a single invoice for the README quick-start path', () => {
+    const inv = create({
+      seller,
+      buyer,
+      items: [{ description: 'Widget', quantity: 1, unitPrice: 1000 }],
+      invoiceNumber: 'INV-CSV-SINGLE',
+      issueDate: '2026-01-15',
+    });
+
+    const csv = toCSV(inv);
+    const lines = csv.split('\n');
+    expect(lines).toHaveLength(2);
+    expect(lines[1]).toContain('INV-CSV-SINGLE');
+  });
+
   it('escapes fields containing commas', () => {
     const inv = create({
       seller: { name: 'Acme, Inc.', tin: '111', address: 'A' },

@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import { calculateTransaction } from './marketplace';
+import { InvalidAmountError, ValidationError } from './errors';
 import { bankersRound } from './utils';
 import type { TaxCategory } from './types';
 
@@ -109,6 +110,28 @@ describe('Marketplace Module — shared fixture tests', () => {
 });
 
 describe('Marketplace Module — VAT-registered seller', () => {
+  it('throws InvalidAmountError for negative sale amount', () => {
+    expect(() =>
+      calculateTransaction({
+        saleAmount: -1,
+        platformCommission: 0.10,
+        sellerVatRegistered: true,
+        buyerType: 'individual',
+      }),
+    ).toThrow(InvalidAmountError);
+  });
+
+  it('throws ValidationError for platform commission above 100%', () => {
+    expect(() =>
+      calculateTransaction({
+        saleAmount: 100_000,
+        platformCommission: 1.01,
+        sellerVatRegistered: true,
+        buyerType: 'individual',
+      }),
+    ).toThrow(ValidationError);
+  });
+
   it('no WHT deducted, seller collects VAT', () => {
     const result = calculateTransaction({
       saleAmount: 100000,

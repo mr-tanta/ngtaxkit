@@ -1,4 +1,4 @@
-// @tantainnovative/ngtaxkit — npm package
+// ngtaxkit — npm package
 // Re-exports core (Layer 1) + Layer 2 document generation modules
 
 // ─── Layer 1: Core Calculation Engine (re-export everything) ─────────────────
@@ -12,6 +12,7 @@ export {
   marketplace,
   payroll,
   rates,
+  tools,
   // Errors
   NgtaxkitError,
   InvalidAmountError,
@@ -31,6 +32,14 @@ export type {
   TaxCategory,
   WhtServiceType,
   NigerianState,
+  SourceType,
+  VerificationStatus,
+  SourceConfidence,
+  RateSourceValue,
+  RateSourceInput,
+  RateSourceMetadata,
+  RateAuditResult,
+  CalculationExplanation,
   TaxBand,
   CommissionBreakdown,
   VatLiability,
@@ -52,6 +61,10 @@ export type {
   MarketplaceResult,
   EmployeeInput,
   PayrollBatchResult,
+  ToolName,
+  JsonSchema,
+  ToolSchema,
+  OpenApiSpec,
   FieldError,
   ErrorCodeValue,
 } from '@ngtaxkit/core';
@@ -83,25 +96,3 @@ export * as whtCreditNote from './pdf/wht-credit-note';
 export * as formH1 from './pdf/form-h1';
 export * as payslip from './pdf/payslip';
 export * as vatReturn from './pdf/vat-return';
-
-// ─── Layer 3: Cloud Client (stub) ───────────────────────────────────────────
-export interface CloudClientOptions {
-  apiKey: string;
-  environment: 'production' | 'sandbox';
-}
-
-/**
- * Stub cloud client for Layer 3 API.
- * Full implementation will connect to api.ngtaxkit.dev.
- */
-export class NgtaxkitCloud {
-  private options: CloudClientOptions;
-
-  constructor(options: CloudClientOptions) {
-    this.options = options;
-  }
-
-  get environment(): string {
-    return this.options.environment;
-  }
-}

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from . import vat as vat_module
 from . import wht as wht_module
 from .types import (
@@ -10,7 +12,7 @@ from .types import (
     TransactionBreakdown,
     VatLiability,
 )
-from .utils import bankers_round
+from .utils import assert_non_negative_finite, assert_rate_between_zero_and_one, bankers_round
 
 
 def calculate_transaction(
@@ -32,6 +34,9 @@ def calculate_transaction(
     5. seller_payout = sale_amount − commission_amount − wht_amount.
     6. Balance invariant: total_from_buyer === seller_payout + commission + VAT + WHT
     """
+    assert_non_negative_finite("sale_amount", sale_amount)
+    assert_rate_between_zero_and_one("platform_commission", platform_commission)
+
     # 1. Calculate VAT on the full sale amount
     vat_result = vat_module.calculate(amount=sale_amount, category=service_category)
     vat_amount = vat_result["vat"]
@@ -58,7 +63,7 @@ def calculate_transaction(
     seller_payout = bankers_round(total_from_buyer - commission_amount - vat_amount - wht_amount)
 
     # 6. VAT liability assignment
-    vat_collected_by: str = (
+    vat_collected_by: Literal["seller", "platform"] = (
         "seller" if seller_vat_registered and not platform_is_vat_agent else "platform"
     )
 
@@ -75,9 +80,9 @@ def calculate_transaction(
         seller_payout=seller_payout,
         wht=wht_result,
         vat_liability=VatLiability(
-            collected_by=vat_collected_by,  # type: ignore[arg-type]
+            collected_by=vat_collected_by,
             amount=vat_amount,
-            remitted_by=vat_collected_by,  # type: ignore[arg-type]
+            remitted_by=vat_collected_by,
         ),
         breakdown=TransactionBreakdown(
             sale_amount=sale_amount,

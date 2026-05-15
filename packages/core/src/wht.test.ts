@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import * as wht from './wht';
-import { InvalidServiceTypeError } from './errors';
+import { InvalidAmountError, InvalidServiceTypeError, ValidationError } from './errors';
 import type { WhtServiceType } from './types';
 import testCases from '../../../shared/fixtures/wht_test_cases.json';
 
@@ -111,6 +111,42 @@ describe('WHT Module — small company exemption boundary', () => {
   });
 });
 
+describe('WHT Module — explainCalculate()', () => {
+  it('returns the WHT result with formula steps and source metadata', () => {
+    const options = {
+      amount: 1_000_000,
+      payeeType: 'company' as const,
+      serviceType: 'professional' as const,
+      paymentDate: '2026-06-15',
+    };
+    const explanation = wht.explainCalculate(options);
+
+    expect(explanation.result).toEqual(wht.calculate(options));
+    expect(explanation.formula.some((step) => step.includes('WHT amount = gross amount * withholding rate'))).toBe(true);
+    expect(explanation.rateKeys).toEqual(expect.arrayContaining([
+      'wht.serviceTypes.professional.company',
+      'wht.remittanceDeadline.dayOfMonth',
+    ]));
+    expect(explanation.sources.some((source) => source.key === 'wht.serviceTypes.professional.company')).toBe(true);
+  });
+
+  it('explains small company exemption decisions', () => {
+    const options = {
+      amount: 2_000_000,
+      payeeType: 'company' as const,
+      serviceType: 'professional' as const,
+      payeeIsSmallCompany: true,
+      paymentDate: '2026-06-15',
+    };
+    const explanation = wht.explainCalculate(options);
+
+    expect(explanation.result.exempt).toBe(true);
+    expect(explanation.rateKeys).toContain('wht.smallCompanyExemption.threshold');
+    expect(explanation.formula.some((step) => step.includes('Small company exemption applies'))).toBe(true);
+    expect(explanation.warnings.some((warning) => warning.includes('wht.smallCompanyExemption.threshold'))).toBe(true);
+  });
+});
+
 // ─── 7.2: listServiceTypes ──────────────────────────────────────────────────
 
 describe('WHT Module — listServiceTypes', () => {
@@ -126,6 +162,39 @@ describe('WHT Module — listServiceTypes', () => {
 // ─── 7.2: Invalid service type ──────────────────────────────────────────────
 
 describe('WHT Module — error handling', () => {
+  it('throws InvalidAmountError for negative amount', () => {
+    expect(() =>
+      wht.calculate({
+        amount: -1,
+        payeeType: 'individual',
+        serviceType: 'professional',
+        paymentDate: '2026-01-15',
+      }),
+    ).toThrow(InvalidAmountError);
+  });
+
+  it('throws InvalidAmountError for NaN amount', () => {
+    expect(() =>
+      wht.calculate({
+        amount: Number.NaN,
+        payeeType: 'individual',
+        serviceType: 'professional',
+        paymentDate: '2026-01-15',
+      }),
+    ).toThrow(InvalidAmountError);
+  });
+
+  it('throws ValidationError for invalid payee type', () => {
+    expect(() =>
+      wht.calculate({
+        amount: 100_000,
+        payeeType: 'partnership' as 'individual',
+        serviceType: 'professional',
+        paymentDate: '2026-01-15',
+      }),
+    ).toThrow(ValidationError);
+  });
+
   it('throws InvalidServiceTypeError for unknown service type', () => {
     expect(() =>
       wht.calculate({

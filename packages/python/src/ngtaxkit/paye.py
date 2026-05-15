@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-from .errors import InvalidAmountError
-from .rates import get
+from typing import Any, TypedDict, cast
+
+from .explain import collect_rate_sources, unique_rate_keys
+from .rates import get_float, get_list, get_str
 from .types import (
+    CalculationExplanation,
     EmployerCosts,
     MonthlyDeductions,
     PayeResult,
@@ -12,25 +15,35 @@ from .types import (
     ReliefBreakdown,
     TaxBand,
 )
-from .utils import bankers_round
+from .utils import assert_non_negative_finite, bankers_round
 
 # ─── Internal Helpers ─────────────────────────────────────────────────────────
 
 
-def _load_brackets() -> list[dict]:
+class _PayeBracket(TypedDict):
+    lower: float
+    upper: float | None
+    rate: float
+
+
+def _load_brackets() -> list[_PayeBracket]:
     """Load PAYE brackets from the rates registry."""
-    bands = get("paye.bands")
-    return [
-        {
-            "lower": b["lower"],
-            "upper": b["upper"],
-            "rate": b["rate"],
-        }
-        for b in bands  # type: ignore[union-attr]
-    ]
+    bands = get_list("paye.bands")
+    brackets: list[_PayeBracket] = []
+    for raw_band in bands:
+        band = cast(dict[str, Any], raw_band)
+        upper = band["upper"]
+        brackets.append(
+            _PayeBracket(
+                lower=float(band["lower"]),
+                upper=float(upper) if upper is not None else None,
+                rate=float(band["rate"]),
+            )
+        )
+    return brackets
 
 
-def _apply_bands(taxable_income: float, brackets: list[dict]) -> list[TaxBand]:
+def _apply_bands(taxable_income: float, brackets: list[_PayeBracket]) -> list[TaxBand]:
     """Apply graduated tax bands to taxable income and return per-band breakdown."""
     result: list[TaxBand] = []
     for band in brackets:
@@ -60,13 +73,11 @@ def calculate(
     tax_year: int | None = None,
 ) -> PayeResult:
     """Calculate PAYE for a given gross annual income."""
-    if gross_annual < 0:
-        raise InvalidAmountError(
-            f"Gross annual income must be non-negative, received {gross_annual}"
-        )
+    assert_non_negative_finite("gross_annual", gross_annual)
+    assert_non_negative_finite("rent_paid_annual", rent_paid_annual)
 
-    exemption_threshold: float = get("paye.exemptionThreshold")  # type: ignore[assignment]
-    legal_basis: str = get("paye.legalBasis")  # type: ignore[assignment]
+    exemption_threshold = get_float("paye.exemptionThreshold")
+    legal_basis = get_str("paye.legalBasis")
     brackets = _load_brackets()
 
     # ── Exemption check ──
@@ -90,7 +101,7 @@ def calculate(
             monthly_paye=0.0,
             effective_rate=0.0,
             exempt=True,
-            exemption_basis=get("paye.exemptionBasis"),  # type: ignore[arg-type]
+            exemption_basis=get_str("paye.exemptionBasis"),
             net_monthly=gross_monthly,
             monthly_deductions=MonthlyDeductions(paye=0.0, pension=0.0, nhf=0.0, total=0.0),
             employer_costs=EmployerCosts(pension=0.0, nsitf=0.0, itf=0.0, total=0.0),
@@ -120,9 +131,9 @@ def calculate(
     effective_rate = round(annual_paye / gross_annual, 4) if gross_annual > 0 else 0.0
 
     # ── Pension & NHF amounts ──
-    min_employee_rate: float = get("pension.minimumRates.employee")  # type: ignore[assignment]
-    min_employer_rate: float = get("pension.minimumRates.employer")  # type: ignore[assignment]
-    nhf_rate: float = get("statutory.nhf.rate")  # type: ignore[assignment]
+    min_employee_rate = get_float("pension.minimumRates.employee")
+    min_employer_rate = get_float("pension.minimumRates.employer")
+    nhf_rate = get_float("statutory.nhf.rate")
 
     employee_pension = bankers_round(gross_annual * min_employee_rate) if pension_contributing else 0.0
     employer_pension = bankers_round(gross_annual * min_employer_rate) if pension_contributing else 0.0
@@ -144,8 +155,8 @@ def calculate(
 
     # ── Employer costs ──
     monthly_employer_pension = bankers_round(employer_pension / 12)
-    nsitf_rate: float = get("statutory.nsitf.rate")  # type: ignore[assignment]
-    itf_rate: float = get("statutory.itf.rate")  # type: ignore[assignment]
+    nsitf_rate = get_float("statutory.nsitf.rate")
+    itf_rate = get_float("statutory.itf.rate")
     monthly_nsitf = bankers_round(gross_monthly * nsitf_rate)
     monthly_itf = bankers_round(gross_monthly * itf_rate)
     employer_costs = EmployerCosts(
@@ -175,13 +186,108 @@ def calculate(
     )
 
 
+def explain_calculate(
+    gross_annual: float,
+    pension_contributing: bool = False,
+    nhf_contributing: bool = False,
+    rent_paid_annual: float = 0.0,
+    disability_status: bool = False,
+    tax_year: int | None = None,
+) -> CalculationExplanation:
+    """Calculate PAYE and return the source-backed reasoning used for the result."""
+    result = calculate(
+        gross_annual=gross_annual,
+        pension_contributing=pension_contributing,
+        nhf_contributing=nhf_contributing,
+        rent_paid_annual=rent_paid_annual,
+        disability_status=disability_status,
+        tax_year=tax_year,
+    )
+
+    rate_keys = [
+        "paye.exemptionThreshold",
+        "paye.cra.fixedAmount",
+        "paye.cra.percentOfGross",
+        "paye.cra.additionalPercentOfGross",
+        "paye.rentRelief.rate",
+        "paye.rentRelief.cap",
+        "paye.bands",
+    ]
+    if pension_contributing:
+        rate_keys.extend([
+            "pension.minimumRates.employee",
+            "pension.minimumRates.employer",
+        ])
+    if nhf_contributing:
+        rate_keys.append("statutory.nhf.rate")
+    if not result["exempt"]:
+        rate_keys.extend(["statutory.nsitf.rate", "statutory.itf.rate"])
+
+    rate_keys = unique_rate_keys(rate_keys)
+    sources, warnings = collect_rate_sources(rate_keys)
+
+    if result["exempt"]:
+        formula = [
+            f"Gross annual income = {gross_annual}.",
+            "Gross annual income is at or below the exemption threshold, so annual PAYE is 0.",
+            "Monthly PAYE = 0.",
+        ]
+    else:
+        formula = [
+            f"Gross annual income = {gross_annual}.",
+            "Consolidated relief = max(CRA fixed amount, gross annual income * CRA minimum percent) + gross annual income * CRA additional percent.",
+            "Rent relief = min(rent paid * rent relief rate, rent relief cap).",
+            "Taxable income = gross annual income - total reliefs.",
+            "Annual PAYE = sum of taxable income portions multiplied by the graduated PAYE band rates.",
+            "Monthly PAYE = annual PAYE / 12.",
+        ]
+
+    if pension_contributing:
+        formula.append("Employee pension deduction = gross annual income * employee pension rate.")
+        formula.append("Employer pension cost = gross annual income * employer pension rate.")
+    if nhf_contributing:
+        formula.append("NHF deduction = gross annual income * NHF rate.")
+
+    assumptions = [
+        "Amounts are denominated in Nigerian naira.",
+        "Monetary values use banker's rounding to 2 decimal places.",
+        "Bundled 2026 PAYE rates are used for this calculation.",
+    ]
+    if tax_year is not None:
+        assumptions.append(
+            "tax_year is accepted for API compatibility; the current bundled registry does not switch PAYE rate files by year."
+        )
+    if disability_status:
+        assumptions.append(
+            "disability_status is accepted for API compatibility; the current bundled registry does not add a disability-specific relief."
+        )
+
+    return CalculationExplanation(
+        inputs={
+            "gross_annual": gross_annual,
+            "pension_contributing": pension_contributing,
+            "nhf_contributing": nhf_contributing,
+            "rent_paid_annual": rent_paid_annual,
+            "disability_status": disability_status,
+            "tax_year": tax_year,
+        },
+        result=result,
+        formula=formula,
+        assumptions=assumptions,
+        rate_keys=rate_keys,
+        sources=sources,
+        warnings=warnings,
+    )
+
+
 def is_exempt(gross_annual: float, tax_year: int | None = None) -> bool:
     """Check if a gross annual income is exempt from PAYE."""
-    threshold: float = get("paye.exemptionThreshold")  # type: ignore[assignment]
+    assert_non_negative_finite("gross_annual", gross_annual)
+    threshold = get_float("paye.exemptionThreshold")
     return gross_annual <= threshold
 
 
-def get_brackets(tax_year: int | None = None) -> list[dict]:
+def get_brackets(tax_year: int | None = None) -> list[_PayeBracket]:
     """Get the PAYE graduated tax brackets for a given tax year."""
     return _load_brackets()
 
@@ -195,25 +301,28 @@ def calculate_relief(
     tax_year: int | None = None,
 ) -> ReliefBreakdown:
     """Calculate all PAYE reliefs for the given options."""
+    assert_non_negative_finite("gross_annual", gross_annual)
+    assert_non_negative_finite("rent_paid_annual", rent_paid_annual)
+
     # CRA: max(₦200K, 1% of gross) + 20% of gross
-    cra_fixed: float = get("paye.cra.fixedAmount")  # type: ignore[assignment]
-    cra_percent: float = get("paye.cra.percentOfGross")  # type: ignore[assignment]
-    cra_additional: float = get("paye.cra.additionalPercentOfGross")  # type: ignore[assignment]
+    cra_fixed = get_float("paye.cra.fixedAmount")
+    cra_percent = get_float("paye.cra.percentOfGross")
+    cra_additional = get_float("paye.cra.additionalPercentOfGross")
     consolidated_relief = bankers_round(
         max(cra_fixed, gross_annual * cra_percent) + gross_annual * cra_additional
     )
 
     # Pension relief: 8% of gross (if contributing)
-    min_employee_rate: float = get("pension.minimumRates.employee")  # type: ignore[assignment]
+    min_employee_rate = get_float("pension.minimumRates.employee")
     pension_relief = bankers_round(gross_annual * min_employee_rate) if pension_contributing else 0.0
 
     # NHF relief: 2.5% of gross (if contributing)
-    nhf_rate: float = get("statutory.nhf.rate")  # type: ignore[assignment]
+    nhf_rate = get_float("statutory.nhf.rate")
     nhf_relief = bankers_round(gross_annual * nhf_rate) if nhf_contributing else 0.0
 
     # Rent relief: 20% of rent paid, capped at ₦500K
-    rent_relief_rate: float = get("paye.rentRelief.rate")  # type: ignore[assignment]
-    rent_relief_cap: float = get("paye.rentRelief.cap")  # type: ignore[assignment]
+    rent_relief_rate = get_float("paye.rentRelief.rate")
+    rent_relief_cap = get_float("paye.rentRelief.cap")
     rent_relief = (
         bankers_round(min(rent_paid_annual * rent_relief_rate, rent_relief_cap))
         if rent_paid_annual > 0
