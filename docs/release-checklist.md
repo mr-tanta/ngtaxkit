@@ -39,6 +39,7 @@ Changelog entries should separate:
 ## Publishing
 
 - Tag full npm + PyPI releases as `vX.Y.Z`.
+- Tag npm-only patch releases as `npm-vX.Y.Z` so only the npm workflow runs.
 - Tag Python-only patch releases as `py-vX.Y.Z` so only the PyPI workflow runs.
 - Let GitHub Actions run CI before npm/PyPI publish jobs.
 - Confirm the published npm tarball and PyPI wheel include bundled rate and source metadata files.

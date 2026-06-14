@@ -10,6 +10,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ### Fixed
 
+- TypeScript VAT, WHT, and Pension calculators now raise `InvalidDateError` for malformed ISO date inputs.
+- TypeScript package exports now include browser-specific entrypoints for browser-safe bundles.
 - Python VAT, WHT, and Pension calculators now raise `InvalidDateError` for malformed ISO date inputs instead of leaking raw `ValueError` exceptions.
 - Added Python regression coverage for invalid VAT dates, WHT payment dates, and Pension salary payment dates.
 

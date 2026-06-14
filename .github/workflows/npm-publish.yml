@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "v*"
+      - "npm-v*"
 
 jobs:
   ci:
@@ -27,6 +28,7 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - run: npm ci
+      - run: npm install --no-save @rolldown/binding-linux-x64-gnu@1.1.0
       - run: npm run build
 
       - name: Dry run — verify package contents
