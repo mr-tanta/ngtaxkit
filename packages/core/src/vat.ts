@@ -4,7 +4,7 @@
 
 import type { CalculationExplanation, TaxCategory, VatCalculateOptions, VatResult } from './types';
 import { InvalidCategoryError } from './errors';
-import { assertNonNegativeFinite, bankersRound } from './utils';
+import { assertNonNegativeFinite, bankersRound, parseIsoDateParts } from './utils';
 import { get } from './rates';
 import { collectRateSources } from './explain';
 
@@ -256,7 +256,7 @@ function resolveRate(category: TaxCategory, date?: string): number {
 
   // Date-based regime selection
   if (date) {
-    const year = parseInt(date.substring(0, 4), 10);
+    const { year } = parseIsoDateParts(date, 'date');
     if (year < 2026) {
       // Pre-2026: VAT was 7.5% (same rate, but supports future divergence)
       return 0.075;

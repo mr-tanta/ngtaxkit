@@ -1,5 +1,5 @@
 {
-  "name": "ngtaxkit",
+  "name": "ngtaxkit-workspace",
   "private": true,
   "workspaces": [
     "packages/core",
@@ -7,15 +7,14 @@
     "packages/python"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "test": "turbo run test",
-    "lint": "turbo run lint",
-    "type-check": "turbo run type-check",
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run build && npm run test --workspaces --if-present",
+    "lint": "npm run build && npm run lint --workspaces --if-present",
+    "type-check": "npm run build && npm run type-check --workspaces --if-present",
     "verify:rates": "node scripts/verify-rate-data-sync.mjs",
-    "clean": "turbo run clean"
+    "clean": "npm run clean --workspaces --if-present"
   },
   "devDependencies": {
-    "turbo": "^2.5.0",
     "typescript": "^5.8.0"
   },
   "packageManager": "npm@10.8.0",

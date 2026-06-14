@@ -8,7 +8,7 @@ from .errors import InvalidCategoryError
 from .explain import collect_rate_sources
 from .rates import get_float, get_str
 from .types import CalculationExplanation, RateType, TaxCategory, VatResult
-from .utils import assert_non_negative_finite, bankers_round
+from .utils import assert_non_negative_finite, bankers_round, parse_iso_date
 
 # ─── Internal Helpers ─────────────────────────────────────────────────────────
 
@@ -80,7 +80,7 @@ def _resolve_rate(category: str, date: str | None = None) -> float:
         return 0.0
 
     if date:
-        year = int(date[:4])
+        year = parse_iso_date(date, "date").year
         if year < 2026:
             return 0.075
 

@@ -207,8 +207,7 @@ npm run type-check
 ├── shared/
 │   ├── rates/          # Versioned JSON rate data (consumed by both languages)
 │   └── fixtures/       # Cross-language parity test fixtures
-├── package.json        # Turborepo workspace root
-└── turbo.json
+└── package.json        # npm workspace root
 ```
 
 ## Supported Tax Categories

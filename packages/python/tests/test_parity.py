@@ -6,7 +6,6 @@ Validates: Requirements 12.1, 12.2, 12.3
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
 
 import pytest

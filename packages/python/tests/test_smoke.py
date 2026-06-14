@@ -105,6 +105,10 @@ class TestVat:
         with pytest.raises(errors.InvalidCategoryError):
             vat.calculate(amount=100.0, category="invalid")
 
+    def test_invalid_date_raises(self):
+        with pytest.raises(errors.InvalidDateError):
+            vat.calculate(amount=100.0, date="bad-date")
+
     def test_is_taxable(self):
         assert vat.is_taxable("standard") is True
         assert vat.is_taxable("basic-food") is False
@@ -197,6 +201,15 @@ class TestWht:
                 service_type="professional",
             )
 
+    def test_invalid_payment_date_raises(self):
+        with pytest.raises(errors.InvalidDateError):
+            wht.calculate(
+                amount=1000.0,
+                payee_type="individual",
+                service_type="professional",
+                payment_date="bad-date",
+            )
+
     def test_invalid_payee_type_raises(self):
         with pytest.raises(errors.ValidationError):
             wht.calculate(
@@ -245,6 +258,10 @@ class TestPension:
     def test_negative_salary_component_raises(self):
         with pytest.raises(errors.InvalidAmountError):
             pension.calculate(basic_salary=200000.0, housing_allowance=-1.0)
+
+    def test_invalid_salary_payment_date_raises(self):
+        with pytest.raises(errors.InvalidDateError):
+            pension.calculate(basic_salary=200000.0, salary_payment_date="bad-date")
 
     def test_invalid_employer_rate(self):
         with pytest.raises(errors.InvalidPensionRateError):

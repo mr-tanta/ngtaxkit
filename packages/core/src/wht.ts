@@ -4,7 +4,7 @@
 
 import type { CalculationExplanation, WhtServiceType, WhtCalculateOptions, WhtResult } from './types';
 import { InvalidServiceTypeError, ValidationError } from './errors';
-import { assertNonNegativeFinite, bankersRound } from './utils';
+import { assertNonNegativeFinite, bankersRound, parseIsoDateParts } from './utils';
 import { get } from './rates';
 import { collectRateSources, uniqueRateKeys } from './explain';
 
@@ -56,7 +56,7 @@ function validatePayeeType(payeeType: string): asserts payeeType is 'individual'
  * Per WHT Regulations 2024: 21st of the following month, no working-day adjustment.
  */
 function calcRemittanceDeadline(paymentDate: string, dayOfMonth: number): string {
-  const [year, month] = paymentDate.split('-').map(Number);
+  const { year, month } = parseIsoDateParts(paymentDate, 'paymentDate');
   let nextMonth = month + 1;
   let nextYear = year;
   if (nextMonth > 12) {

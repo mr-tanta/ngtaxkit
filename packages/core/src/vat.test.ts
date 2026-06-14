@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import { calculate, explainCalculate, extract, isTaxable, isZeroRated, isExempt, getRate, listCategories } from './vat';
-import { InvalidAmountError, InvalidCategoryError } from './errors';
+import { InvalidAmountError, InvalidCategoryError, InvalidDateError } from './errors';
 import type { TaxCategory } from './types';
 
 // ─── Load shared fixtures ────────────────────────────────────────────────────
@@ -224,6 +224,12 @@ describe('VAT Module — date-based rate regime', () => {
   it('uses bundled rate for post-2026 date', () => {
     const result = calculate({ amount: 10000, category: 'standard', date: '2026-06-15' });
     expect(result.rate).toBe(0.075);
+  });
+
+  it('throws InvalidDateError for malformed date strings', () => {
+    expect(() =>
+      calculate({ amount: 10000, category: 'standard', date: 'bad-date' }),
+    ).toThrow(InvalidDateError);
   });
 });
 

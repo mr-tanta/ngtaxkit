@@ -144,8 +144,12 @@ jobs:
 
       - name: Check bundle size
         run: |
-          RAW=$(wc -c < packages/typescript/dist/index.js)
-          GZIP=$(gzip -c packages/typescript/dist/index.js | wc -c)
+          BUNDLE=packages/typescript/dist/index.mjs
+          if [ ! -f "$BUNDLE" ]; then
+            BUNDLE=packages/typescript/dist/index.js
+          fi
+          RAW=$(wc -c < "$BUNDLE")
+          GZIP=$(gzip -c "$BUNDLE" | wc -c)
           echo "Raw: ${RAW} bytes"
           echo "Gzipped: ${GZIP} bytes"
           if [ "$GZIP" -gt 51200 ]; then

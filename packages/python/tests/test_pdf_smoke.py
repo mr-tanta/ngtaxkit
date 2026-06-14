@@ -6,8 +6,8 @@ import pytest
 
 fpdf2 = pytest.importorskip("fpdf")
 
-from ngtaxkit import invoice
-from ngtaxkit.pdf import invoice_pdf, wht_credit_note, form_h1, payslip, vat_return
+from ngtaxkit import invoice  # noqa: E402
+from ngtaxkit.pdf import invoice_pdf, wht_credit_note, form_h1, payslip, vat_return  # noqa: E402
 
 
 SELLER = {"name": "Acme Ltd", "tin": "12345678-0001", "address": "Lagos"}

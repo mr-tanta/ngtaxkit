@@ -39,4 +39,50 @@ describe('package entrypoint', () => {
 
     vi.doUnmock('pdfkit');
   });
+
+  it('exports invoice validation errors as runtime classes', async () => {
+    const sdk = await import('./index');
+    const invoiceBase = {
+      invoiceNumber: 'INV-002',
+      issueDate: '2026-05-15',
+      seller: { name: 'Acme Ltd', tin: '12345678-0001', address: 'Lagos' },
+      buyer: { name: 'Beta Ltd', tin: '87654321-0001', address: 'Abuja' },
+    };
+
+    expect(sdk.InvalidQuantityError).toBeTypeOf('function');
+    expect(sdk.EmptyInvoiceError).toBeTypeOf('function');
+    expect(() =>
+      sdk.create({
+        ...invoiceBase,
+        items: [{ description: 'Consulting', quantity: 0, unitPrice: 100_000 }],
+      }),
+    ).toThrow(sdk.InvalidQuantityError);
+    expect(() =>
+      sdk.create({
+        ...invoiceBase,
+        items: [],
+      }),
+    ).toThrow(sdk.EmptyInvoiceError);
+  });
+
+  it('exposes a browser-safe entrypoint without PDF exports', async () => {
+    vi.resetModules();
+    vi.doMock('pdfkit', () => {
+      throw new Error('browser entrypoint should not import pdfkit');
+    });
+
+    const sdk = await import('./browser');
+
+    expect(sdk.vat.calculate({ amount: 1_000 }).vat).toBe(75);
+    expect(sdk.create({
+      invoiceNumber: 'INV-003',
+      issueDate: '2026-05-15',
+      seller: { name: 'Acme Ltd', tin: '12345678-0001', address: 'Lagos' },
+      buyer: { name: 'Beta Ltd', tin: '87654321-0001', address: 'Abuja' },
+      items: [{ description: 'Consulting', quantity: 1, unitPrice: 100_000 }],
+    }).totalVat).toBe(7_500);
+    expect('toPDF' in sdk).toBe(false);
+
+    vi.doUnmock('pdfkit');
+  });
 });

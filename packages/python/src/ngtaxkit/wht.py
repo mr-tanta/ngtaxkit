@@ -8,7 +8,7 @@ from .errors import InvalidServiceTypeError, ValidationError
 from .explain import collect_rate_sources, unique_rate_keys
 from .rates import get_float, get_int, get_str
 from .types import CalculationExplanation, WhtResult
-from .utils import assert_non_negative_finite, bankers_round
+from .utils import assert_non_negative_finite, bankers_round, parse_iso_date
 
 # ─── Internal Helpers ─────────────────────────────────────────────────────────
 
@@ -49,7 +49,9 @@ def _validate_payee_type(payee_type: str) -> None:
 
 def _calc_remittance_deadline(payment_date: str, day_of_month: int) -> str:
     """Calculate remittance deadline as the Nth day of the month following the payment date."""
-    year, month, _ = (int(x) for x in payment_date.split("-"))
+    parsed_date = parse_iso_date(payment_date, "payment_date")
+    year = parsed_date.year
+    month = parsed_date.month
     next_month = month + 1
     next_year = year
     if next_month > 12:

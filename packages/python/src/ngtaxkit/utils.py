@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import datetime
 import math
+import re
 from decimal import ROUND_HALF_EVEN, Decimal
 
-from .errors import InvalidAmountError, ValidationError
+from .errors import InvalidAmountError, InvalidDateError, ValidationError
 
 
 def assert_non_negative_finite(field: str, value: float) -> None:
@@ -54,6 +55,8 @@ NIGERIAN_PUBLIC_HOLIDAYS_2026: frozenset[str] = frozenset([
     "2026-05-28",  # Eid al-Adha Day 2
     "2026-06-17",  # Eid al-Maulud
 ])
+
+ISO_DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 
 
 def is_public_holiday(date_str: str) -> bool:
@@ -121,9 +124,24 @@ def get_remittance_deadline(payment_date: str, day_of_month: int) -> str:
 # ─── Internal Helpers ─────────────────────────────────────────────────────────
 
 
-def _parse_date(date_str: str) -> datetime.date:
+def parse_iso_date(date_str: str, field: str = "date") -> datetime.date:
     """Parse an ISO date string (YYYY-MM-DD) into a date object."""
-    return datetime.date.fromisoformat(date_str)
+    if not isinstance(date_str, str) or ISO_DATE_PATTERN.fullmatch(date_str) is None:
+        raise InvalidDateError(
+            f"{field} must be a valid ISO date string (YYYY-MM-DD), received {date_str}"
+        )
+
+    try:
+        return datetime.date.fromisoformat(date_str)
+    except ValueError as exc:
+        raise InvalidDateError(
+            f"{field} must be a valid ISO date string (YYYY-MM-DD), received {date_str}"
+        ) from exc
+
+
+def _parse_date(date_str: str, field: str = "date") -> datetime.date:
+    """Parse an ISO date string (YYYY-MM-DD) into a date object."""
+    return parse_iso_date(date_str, field)
 
 
 def _format_date(dt: datetime.date) -> str:

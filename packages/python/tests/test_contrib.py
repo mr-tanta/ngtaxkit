@@ -29,6 +29,7 @@ class TestFlaskContrib:
             from ngtaxkit.contrib.flask import create_blueprint, init_app, naira_filter
             assert callable(create_blueprint)
             assert callable(init_app)
+            assert callable(naira_filter)
         except ImportError:
             pytest.skip("Flask not installed")
 
@@ -48,6 +49,7 @@ class TestFastAPIContrib:
             from ngtaxkit.contrib.fastapi import create_router, VatRequest, PayeRequest
             assert callable(create_router)
             assert VatRequest is not None
+            assert PayeRequest is not None
         except ImportError:
             pytest.skip("FastAPI not installed")
 

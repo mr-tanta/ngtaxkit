@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import * as pension from './pension';
-import { InvalidAmountError, InvalidPensionRateError } from './errors';
+import { InvalidAmountError, InvalidDateError, InvalidPensionRateError } from './errors';
 import testCases from '../../../shared/fixtures/pension_test_cases.json';
 
 // ─── Types for fixture data ─────────────────────────────────────────────────
@@ -88,6 +88,15 @@ describe('Pension Module — minimum rate validation', () => {
         basicSalary: Number.NaN,
       }),
     ).toThrow(InvalidAmountError);
+  });
+
+  it('throws InvalidDateError for malformed salaryPaymentDate', () => {
+    expect(() =>
+      pension.calculate({
+        basicSalary: 300_000,
+        salaryPaymentDate: 'bad-date',
+      }),
+    ).toThrow(InvalidDateError);
   });
 
   it('throws InvalidPensionRateError for employee rate below 8%', () => {

@@ -1,7 +1,7 @@
 // ─── Utility Functions ────────────────────────────────────────────────────────
 // Pure functions, zero dependencies. Used across all calculation modules.
 
-import { InvalidAmountError, ValidationError } from './errors';
+import { InvalidAmountError, InvalidDateError, ValidationError } from './errors';
 
 // ─── Input Validation ───────────────────────────────────────────────────────
 
@@ -99,12 +99,50 @@ export function isNonWorkingDay(dateStr: string): boolean {
 
 // ─── Date Utilities ──────────────────────────────────────────────────────────
 
+const ISO_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+
+export interface IsoDateParts {
+  year: number;
+  month: number;
+  day: number;
+}
+
+/**
+ * Parse and validate an ISO calendar date string (YYYY-MM-DD).
+ */
+export function parseIsoDateParts(dateStr: string, field = 'date'): IsoDateParts {
+  const match = typeof dateStr === 'string' ? ISO_DATE_PATTERN.exec(dateStr) : null;
+
+  if (!match) {
+    throw new InvalidDateError(
+      `${field} must be a valid ISO date string (YYYY-MM-DD), received ${String(dateStr)}`,
+    );
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+
+  if (
+    parsed.getUTCFullYear() !== year ||
+    parsed.getUTCMonth() !== month - 1 ||
+    parsed.getUTCDate() !== day
+  ) {
+    throw new InvalidDateError(
+      `${field} must be a valid ISO date string (YYYY-MM-DD), received ${dateStr}`,
+    );
+  }
+
+  return { year, month, day };
+}
+
 /**
  * Parse an ISO date string (YYYY-MM-DD) into a UTC Date object.
  * Avoids timezone issues by using UTC methods throughout.
  */
-function parseDateUTC(dateStr: string): Date {
-  const [year, month, day] = dateStr.split('-').map(Number);
+export function parseDateUTC(dateStr: string, field = 'date'): Date {
+  const { year, month, day } = parseIsoDateParts(dateStr, field);
   return new Date(Date.UTC(year, month - 1, day));
 }
 

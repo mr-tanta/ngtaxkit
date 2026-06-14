@@ -5,8 +5,6 @@ Validates: Requirements 35.1 through 35.6
 
 from __future__ import annotations
 
-import math
-
 from hypothesis import given, settings
 from hypothesis import strategies as st
 

@@ -6,6 +6,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-06-14
+
+### Fixed
+
+- Python VAT, WHT, and Pension calculators now raise `InvalidDateError` for malformed ISO date inputs instead of leaking raw `ValueError` exceptions.
+- Added Python regression coverage for invalid VAT dates, WHT payment dates, and Pension salary payment dates.
+
 ## [0.1.0] - 2026-05-16
 
 ### Added

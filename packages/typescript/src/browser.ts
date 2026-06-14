@@ -1,9 +1,7 @@
-// ngtaxkit — npm package
-// Re-exports core (Layer 1) + Layer 2 document generation modules
+// Browser-safe ngtaxkit entrypoint.
+// Excludes PDF helpers because they depend on Node-only pdfkit internals.
 
-// ─── Layer 1: Core Calculation Engine (re-export everything) ─────────────────
 export {
-  // Module namespaces
   vat,
   paye,
   wht,
@@ -13,7 +11,6 @@ export {
   payroll,
   rates,
   tools,
-  // Errors
   NgtaxkitError,
   InvalidAmountError,
   InvalidCategoryError,
@@ -27,7 +24,6 @@ export {
   ErrorCode,
 } from '@ngtaxkit/core';
 
-// Re-export all types from core
 export type {
   TaxCategory,
   WhtServiceType,
@@ -69,7 +65,6 @@ export type {
   ErrorCodeValue,
 } from '@ngtaxkit/core';
 
-// ─── Layer 2: Invoice Module ─────────────────────────────────────────────────
 export {
   create,
   validate,
@@ -78,6 +73,7 @@ export {
   InvalidQuantityError,
   EmptyInvoiceError,
 } from './invoice';
+
 export type {
   Party,
   InvoiceItem,
@@ -90,14 +86,4 @@ export type {
   Invoice,
 } from './invoice';
 
-// ─── Layer 2: PDF Generation ─────────────────────────────────────────────────
-export { toPDF } from './pdf/invoice-pdf';
-
-// ─── Layer 2: UBL XML ────────────────────────────────────────────────────────
 export { toUBL } from './xml/ubl';
-
-// ─── Layer 2: Document Modules (namespace exports) ───────────────────────────
-export * as whtCreditNote from './pdf/wht-credit-note';
-export * as formH1 from './pdf/form-h1';
-export * as payslip from './pdf/payslip';
-export * as vatReturn from './pdf/vat-return';

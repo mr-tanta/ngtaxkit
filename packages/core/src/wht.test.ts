@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as fc from 'fast-check';
 import * as wht from './wht';
-import { InvalidAmountError, InvalidServiceTypeError, ValidationError } from './errors';
+import { InvalidAmountError, InvalidDateError, InvalidServiceTypeError, ValidationError } from './errors';
 import type { WhtServiceType } from './types';
 import testCases from '../../../shared/fixtures/wht_test_cases.json';
 
@@ -182,6 +182,17 @@ describe('WHT Module — error handling', () => {
         paymentDate: '2026-01-15',
       }),
     ).toThrow(InvalidAmountError);
+  });
+
+  it('throws InvalidDateError for malformed paymentDate', () => {
+    expect(() =>
+      wht.calculate({
+        amount: 100_000,
+        payeeType: 'individual',
+        serviceType: 'professional',
+        paymentDate: 'bad-date',
+      }),
+    ).toThrow(InvalidDateError);
   });
 
   it('throws ValidationError for invalid payee type', () => {
