@@ -33,7 +33,7 @@ def _require_json_object(value: Any, filename: str) -> JsonObject:
 
 
 def _load_json(filename: str) -> JsonObject:
-    package_path = files("ngtaxkit").joinpath("data", "rates", filename)
+    package_path = files("ngtaxkit") / "data" / "rates" / filename
     if package_path.is_file():
         return _require_json_object(json.loads(package_path.read_text(encoding="utf-8")), filename)
 
