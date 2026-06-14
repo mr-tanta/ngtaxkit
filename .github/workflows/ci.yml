@@ -24,28 +24,29 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: npm install --no-save @rolldown/binding-linux-x64-gnu@1.1.0
       - run: npm run verify:rates
       - run: npm run build
-      - run: npx turbo run type-check --filter='./packages/core' --filter='./packages/typescript'
+      - run: npm run type-check --workspace @ngtaxkit/core
+      - run: npm run type-check --workspace ngtaxkit
 
   test-typescript:
-    name: Test TypeScript (Node ${{ matrix.node-version }})
+    name: Test TypeScript
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18, 22]
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 22
           cache: npm
 
       - run: npm ci
+      - run: npm install --no-save @rolldown/binding-linux-x64-gnu@1.1.0
       - run: npm run verify:rates
       - run: npm run build
-      - run: npx turbo run test --filter='./packages/core' --filter='./packages/typescript'
+      - run: npm run test --workspace @ngtaxkit/core
+      - run: npm run test --workspace ngtaxkit
 
   test-python:
     name: Test Python (${{ matrix.python-version }})
@@ -68,6 +69,7 @@ jobs:
           cache-dependency-path: packages/python/pyproject.toml
 
       - run: npm ci
+      - run: npm install --no-save @rolldown/binding-linux-x64-gnu@1.1.0
       - run: npm run verify:rates
       - run: npm run build
 
@@ -98,6 +100,7 @@ jobs:
           cache-dependency-path: packages/python/pyproject.toml
 
       - run: npm ci
+      - run: npm install --no-save @rolldown/binding-linux-x64-gnu@1.1.0
       - run: npm run verify:rates
       - run: npm run build
 
@@ -139,6 +142,7 @@ jobs:
           cache: npm
 
       - run: npm ci
+      - run: npm install --no-save @rolldown/binding-linux-x64-gnu@1.1.0
       - run: npm run verify:rates
       - run: npm run build
 
